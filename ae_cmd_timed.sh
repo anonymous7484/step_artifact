@@ -37,9 +37,13 @@ time pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_t
 # Produced files: step_artifact/timeshare_mem_bound/fig_8_a.csv, 
 #                 step_artifact/timeshare_mem_bound/fig_9_a.csv,
 #                 step_artifact/timeshare_mem_bound/fig_9_b.csv
+python timeshare_mem_bound/generate_fig8.py 
+# Produced file: step_artifact/timeshare_mem_bound/figure8.pdf
 
 time pytest timeshare_mem_bound/test_membound_qwen_sweep_dyn_tile.py::test_dyn_tile
 # Produced files: step_artifact/timeshare_mem_bound/fig_8_b.csv
+python timeshare_mem_bound/generate_fig9.py 
+# Produced file: step_artifact/timeshare_mem_bound/figure9.pdf
 
 
 echo "figure 8 & 9 done"

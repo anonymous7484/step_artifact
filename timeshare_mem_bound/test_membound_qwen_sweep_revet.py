@@ -1438,7 +1438,7 @@ def test_static_tile():
         fig_8_a["compute_util(%)"].append(round(
             (alg_flops / cycles) / allocated_comp_flops * 100, 2
         ))
-        fig_8_a["performance_overhead(%)"].append(int(cycles / basecase_cycles * 100) - 100)
+        fig_8_a["performance_overhead(%)"].append(round((cycles / basecase_cycles * 100) - 100,2))
 
         fig_9_a["performance(cycles)"].append(cycles)
         fig_9_a["allocated_comp(flops/cycle)"].append(

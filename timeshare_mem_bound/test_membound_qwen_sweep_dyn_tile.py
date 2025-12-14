@@ -1414,7 +1414,7 @@ def test_dyn_tile():
         fig_8_b["compute_util(%)"].append(round(
             (alg_flops / cycles) / allocated_comp_flops * 100, 2
         ))
-        fig_8_b["performance_overhead(%)"].append(int(cycles / basecase_cycles * 100) - 100)
+        fig_8_b["performance_overhead(%)"].append(round((cycles / basecase_cycles * 100) - 100,2))
 
 
     out_file = f"./timeshare_mem_bound/fig_8_b.csv"
