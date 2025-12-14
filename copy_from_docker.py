@@ -13,8 +13,8 @@ FILES_TO_COPY = [
     "dyn_tiling/figure_6_qwen_b64.csv",
     "dyn_tiling/figure6.pdf",
 
-    "figure_7_mixtral_b1024.csv",
-    "figure_7_qwen_b1024.csv",
+    "dyn_tiling/figure_7_mixtral_b1024.csv",
+    "dyn_tiling/figure_7_qwen_b1024.csv",
     "dyn_tiling/figure7.pdf",
 
     "timeshare_mem_bound/fig_8_a.csv",
