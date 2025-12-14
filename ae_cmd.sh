@@ -54,3 +54,6 @@ pytest dynamic_par/sweep_ae.py::test_b64_sweep
 
 pytest dynamic_par/sweep_ae.py::test_b64_b16_sweep
 # Produced file: step_artifact/dynamic_par/batch80_sweep_ae.csv
+
+python dynamic_par/fig11.py
+# Produced file: step_artifact/dynamic_par/figure11.pdf
