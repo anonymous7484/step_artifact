@@ -763,23 +763,23 @@ def test_qwen_b1024():
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
-                "metric",
-                "tile=256",
-                "tile=1024",
-                "tile=dynamic",
+                "tile_N",
+                "cycles",
+                "off_chip_traffic",
+                "on_chip_mem",
             ]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
 
             # Write data rows
-            for metric, values in result_dict_raw.items():
+            for exper in ["tile=256", "tile=1024", "tile=dynamic"]:
                 writer.writerow(
                     {
-                        "metric": metric,
-                        "tile=256": values["tile=256"],
-                        "tile=1024": values["tile=1024"],
-                        "tile=dynamic": values["tile=dynamic"],
+                        "tile_N": exper,
+                        "cycles": result_dict_raw["cycles"][exper],
+                        "off_chip_traffic": result_dict_raw["off_chip_traffic"][exper],
+                        "on_chip_mem": result_dict_raw["on_chip_mem"][exper],
                     }
                 )
 

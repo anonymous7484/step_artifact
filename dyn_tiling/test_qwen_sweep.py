@@ -777,26 +777,26 @@ def test_qwen_b64():
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
-                "metric",
-                "tile=16",
-                "tile=64",
-                "tile=dynamic",
+                "tile_N",
+                "cycles",
+                "off_chip_traffic",
+                "on_chip_mem",
             ]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
 
             # Write data rows
-            for metric, values in result_dict_raw.items():
+            for exper in ["tile=16", "tile=64", "tile=dynamic"]:
                 writer.writerow(
                     {
-                        "metric": metric,
-                        "tile=16": values["tile=16"],
-                        "tile=64": values["tile=64"],
-                        "tile=dynamic": values["tile=dynamic"],
+                        "tile_N": exper,
+                        "cycles": result_dict_raw["cycles"][exper],
+                        "off_chip_traffic": result_dict_raw["off_chip_traffic"][exper],
+                        "on_chip_mem": result_dict_raw["on_chip_mem"][exper],
                     }
                 )
-
+                
         print(f"Results written to {out_file}")
     except Exception as e:
         print(f"Error writing CSV file: {e}")

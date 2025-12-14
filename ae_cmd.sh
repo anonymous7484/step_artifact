@@ -18,6 +18,10 @@ pytest dyn_tiling/test_mixtral_sweep.py::test_mixtral_b64
 pytest dyn_tiling/test_qwen_sweep.py::test_qwen_b64
 # Produced file: step_artifact/dyn_tiling/figure_6_qwen_b64.csv
 
+python dyn_tiling/generate_fig6.py
+# Produced file: step_artifact/dyn_tiling/figure6.pdf
+# Produced file: step_artifact/dyn_tiling/figure6.png
+
 
 # Figure 7
 cd /root/step_artifact/
@@ -26,6 +30,10 @@ pytest dyn_tiling/test_mixtral_sweep_prefill.py::test_mixtral_b1024
 
 pytest dyn_tiling/test_qwen_sweep_prefill.py::test_qwen_b1024
 # Produced file: step_artifact/dyn_tiling/figure_7_qwen_b1024.csv
+
+python dyn_tiling/generate_fig7.py
+# Produced file: step_artifact/dyn_tiling/figure7.pdf
+# Produced file: step_artifact/dyn_tiling/figure7.png
 
 
 # Figure 8 & 9
