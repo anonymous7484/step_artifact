@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     texlive-pictures \
     latexmk \
     libyaml-cpp-dev libfmt-dev libspdlog-dev \
+    texlive-luatex texlive-latex-extra \
     && rm -rf /var/lib/apt/lists/*
 
 # Set g++-12 as the default g++ compiler
