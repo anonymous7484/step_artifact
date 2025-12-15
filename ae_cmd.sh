@@ -1,6 +1,6 @@
 # Figure 5 (2m)
 cd /root/step_artifact/
-./hdl_validation/figure5_step.sh  
+source ./hdl_validation/figure5_step.sh  
 # Produced file: step_artifact/hdl_validation/fig5.csv
 
 
