@@ -3,31 +3,33 @@ import argparse
 import subprocess
 
 # Root inside the container
-CONTAINER_ROOT = "/root/step_artifact"
+CONTAINER_ROOT = "/root"
 
 # List of absolute paths inside the container
 FILES_TO_COPY = [
-    "hdl_validation/fig5.csv",
+    "step_artifact/dyn_tiling/figure_6_mixtral_b64.csv",
+    "step_artifact/dyn_tiling/figure_6_qwen_b64.csv",
+    "step_artifact/dyn_tiling/figure6.pdf",
 
-    "dyn_tiling/figure_6_mixtral_b64.csv",
-    "dyn_tiling/figure_6_qwen_b64.csv",
-    "dyn_tiling/figure6.pdf",
+    "step_artifact/dyn_tiling/figure_7_mixtral_b1024.csv",
+    "step_artifact/dyn_tiling/figure_7_qwen_b1024.csv",
+    "step_artifact/dyn_tiling/figure7.pdf",
 
-    "dyn_tiling/figure_7_mixtral_b1024.csv",
-    "dyn_tiling/figure_7_qwen_b1024.csv",
-    "dyn_tiling/figure7.pdf",
+    "step_artifact/timeshare_mem_bound/fig_8_a.csv",
+    "step_artifact/timeshare_mem_bound/fig_8_b.csv",
+    "step_artifact/timeshare_mem_bound/fig_9_a.csv",
+    "step_artifact/timeshare_mem_bound/fig_9_b.csv",
+    "step_artifact/timeshare_mem_bound/figure8.pdf",
+    "step_artifact/timeshare_mem_bound/figure9.pdf",
 
-    "timeshare_mem_bound/fig_8_a.csv",
-    "timeshare_mem_bound/fig_8_b.csv",
-    "timeshare_mem_bound/fig_9_a.csv",
-    "timeshare_mem_bound/fig_9_b.csv",
-    "timeshare_mem_bound/figure8.pdf",
-    "timeshare_mem_bound/figure9.pdf",
+    "step_artifact/dynamic_par/batch16_sweep_ae.csv",
+    "step_artifact/dynamic_par/batch64_sweep_ae.csv",
+    "step_artifact/dynamic_par/batch80_sweep_ae.csv",
+    "step_artifact/dynamic_par/figure11.pdf",
 
-    "dynamic_par/batch16_sweep_ae.csv",
-    "dynamic_par/batch64_sweep_ae.csv",
-    "dynamic_par/batch80_sweep_ae.csv",
-    "dynamic_par/figure11.pdf",
+    "step-artifact-eval/dse_results.csv",
+    "step-artifact-eval/step_reference.csv",
+    "step-artifact-eval/validation.pdf",
 ]
 
 
@@ -70,7 +72,7 @@ if __name__ == "__main__":
     output_dir = os.path.abspath(args.output_dir)
 
     if args.copy_log is not None:
-        FILES_TO_COPY.append("step_run.log")
+        FILES_TO_COPY.append("step_artifact/step_run.log")
 
     os.makedirs(output_dir, exist_ok=True)
 

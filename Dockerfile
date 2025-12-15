@@ -12,6 +12,10 @@ RUN apt-get update && apt-get install -y \
     cmake \
     g++-12 \
     tcl tk \
+    texlive-latex-base \
+    texlive-pictures \
+    latexmk \
+    libyaml-cpp-dev libfmt-dev libspdlog-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set g++-12 as the default g++ compiler
@@ -22,7 +26,8 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 RUN rustup toolchain install 1.83.0
 
-COPY . /root/step_artifact
+COPY step_artifact  /root/step_artifact
+COPY step-artifact-eval /root/step-artifact-eval
 WORKDIR /root/step_artifact
 
 RUN python3 -m venv venv
