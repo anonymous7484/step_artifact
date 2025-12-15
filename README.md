@@ -20,7 +20,7 @@ This guide assumes the user has a working installation of Docker, git, and some 
     git clone https://github.com/anonymous7484/step-artifact-eval.git
     ```
 
-* Build the Docker image with the following commands (the build takes about 5 minutes)
+* Build the Docker image with the following commands (the build can take upto 5 minutes)
 
     ```
     docker build -f step_artifact/Dockerfile -t step_artifact .
