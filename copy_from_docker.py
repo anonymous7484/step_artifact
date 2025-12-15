@@ -7,14 +7,17 @@ CONTAINER_ROOT = "/root"
 
 # List of absolute paths inside the container
 FILES_TO_COPY = [
+    # Figure 6
     "step_artifact/dyn_tiling/figure_6_mixtral_b64.csv",
     "step_artifact/dyn_tiling/figure_6_qwen_b64.csv",
     "step_artifact/dyn_tiling/figure6.pdf",
 
+    # Figure 7
     "step_artifact/dyn_tiling/figure_7_mixtral_b1024.csv",
     "step_artifact/dyn_tiling/figure_7_qwen_b1024.csv",
     "step_artifact/dyn_tiling/figure7.pdf",
 
+    # Figure 8 & 9
     "step_artifact/timeshare_mem_bound/fig_8_a.csv",
     "step_artifact/timeshare_mem_bound/fig_8_b.csv",
     "step_artifact/timeshare_mem_bound/fig_9_a.csv",
@@ -22,11 +25,13 @@ FILES_TO_COPY = [
     "step_artifact/timeshare_mem_bound/figure8.pdf",
     "step_artifact/timeshare_mem_bound/figure9.pdf",
 
+    # Figure 11
     "step_artifact/dynamic_par/batch16_sweep_ae.csv",
     "step_artifact/dynamic_par/batch64_sweep_ae.csv",
     "step_artifact/dynamic_par/batch80_sweep_ae.csv",
     "step_artifact/dynamic_par/figure11.pdf",
 
+    # Figure 5
     "step-artifact-eval/dse_results.csv",
     "step-artifact-eval/step_reference.csv",
     "step-artifact-eval/validation.pdf",

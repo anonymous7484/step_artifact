@@ -58,7 +58,7 @@ def test_gemm_dyn_tile():
     batch = 1024  # 256, 512, 1024
     iter = 22
     layer = 16
-    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/iter_{iter:03d}_layer_{layer:03d}.npz"
+    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{iter:03d}_{layer:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -224,7 +224,7 @@ def test_gemm_revet_sweep():
     batch = 1024  # 256, 512, 1024
     iter = 22
     layer = 16
-    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/iter_{iter:03d}_layer_{layer:03d}.npz"
+    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{iter:03d}_{layer:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -384,7 +384,7 @@ def test_qwen_b1024():
     batch = 1024  # 256, 512, 1024
     iter = 22
     layer = 16
-    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/iter_{iter:03d}_layer_{layer:03d}.npz"
+    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{iter:03d}_{layer:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
