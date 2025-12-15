@@ -38,7 +38,14 @@ This guide assumes the user has a working installation of Docker, git, and some 
     docker attach <CONTAINER_ID>
     ```
 
-* IMPORTANT: Do not type `exit` in the docker terminal as this will stop the container. The proper way to detach the docker is the pressing sequence `CTRL+p`, `CTRL+q`.
+  * IMPORTANT: Do not type `exit` in the docker terminal as this will stop the container. The proper way to detach the docker is the pressing sequence `CTRL+p`, `CTRL+q`.
+
+* Run the following command to set up the environment. The following command has to run whenever a new terminal is opened.
+
+    ```bash
+    cd /root/step_artifact
+    source setup.sh
+    ```
 
 ## Run Experiments (5 human-minutes + 7 compute-hour)
 
@@ -164,6 +171,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     ```bash
     ### In the docker container ###
     cd /root/step_artifact/
+    source setup.sh
     pytest dyn_tiling/test_mixtral_sweep.py::test_mixtral_b64
     # Produced file: step_artifact/dyn_tiling/figure_6_mixtral_b64.csv
 
@@ -226,6 +234,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     ```bash
     ### In the docker container ###
     cd /root/step_artifact/
+    source setup.sh
     pytest dyn_tiling/test_mixtral_sweep_prefill.py::test_mixtral_b1024
     # Produced file: step_artifact/dyn_tiling/figure_7_mixtral_b1024.csv
 
@@ -288,6 +297,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     ```bash
     ### In the docker container ###
     cd /root/step_artifact/
+    source setup.sh
     pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_tile
     # Produced files: step_artifact/timeshare_mem_bound/fig_8_a.csv, 
 
@@ -347,6 +357,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     ```bash
     ### In the docker container ###
     cd /root/step_artifact/
+    source setup.sh
     pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_tile
     # Produced files: step_artifact/timeshare_mem_bound/fig_9_a.csv,
     #                 step_artifact/timeshare_mem_bound/fig_9_b.csv
@@ -404,6 +415,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     ```bash
     ### In the docker container ###
     cd /root/step_artifact/
+    source setup.sh
     pytest dynamic_par/sweep_ae.py::test_b16_sweep
     # Produced file: step_artifact/dynamic_par/batch16_sweep_ae.csv
 
