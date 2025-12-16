@@ -825,9 +825,9 @@ def test_timeshare_mn_mk_gemm_reshape():
     flops_for_weighted_sum = 1024  # fixed among sweep
 
     # ------------ Expert Indices ------------
-    iter = 32
-    layer = 12
-    expert_selection_file = f"expert_routing/processed_qwen/expr_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 32
+    l_id =12
+    expert_selection_file = f"expert_routing/processed_qwen/expr_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -938,7 +938,7 @@ def test_timeshare_mn_mk_gemm_reshape():
                 print(dict_to_append)
                 results.append(dict_to_append)
 
-    out_file = f"timeshare_mem_bound/qwen_{model_config.dim}_{model_config.moe_inter_dim}_iter{iter:03d}_layer_{layer:03d}_n{tile_N}_f{tile_F}_timeshare_membound.csv"
+    out_file = f"timeshare_mem_bound/qwen_{model_config.dim}_{model_config.moe_inter_dim}_i{i_id:03d}_l_{l_id:03d}_n{tile_N}_f{tile_F}_timeshare_membound.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
@@ -984,9 +984,9 @@ def test_baseline_for_membound_timeshare():
     flops_for_weighted_sum = 1024  # fixed among sweep
 
     # ------------ Expert Indices ------------
-    iter = 32
-    layer = 12
-    expert_selection_file = f"expert_routing/processed_qwen/expr_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 32
+    l_id =12
+    expert_selection_file = f"expert_routing/processed_qwen/expr_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -1085,7 +1085,7 @@ def test_baseline_for_membound_timeshare():
             print(dict_to_append)
             results.append(dict_to_append)
 
-    out_file = f"timeshare_mem_bound/qwen_{model_config.dim}_{model_config.moe_inter_dim}_iter{iter:03d}_layer_{layer:03d}_n{tile_N}_f{tile_F}_timeshare_membound_baseline.csv"
+    out_file = f"timeshare_mem_bound/qwen_{model_config.dim}_{model_config.moe_inter_dim}_i{i_id:03d}_l_{l_id:03d}_n{tile_N}_f{tile_F}_timeshare_membound_baseline.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [

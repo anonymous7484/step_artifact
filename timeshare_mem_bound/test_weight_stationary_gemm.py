@@ -831,9 +831,9 @@ def test_gemm_sweep():
     ]  # For the model_config.moe_inter_dim (48)
 
     # ------------ Expert Indices ------------
-    iter = 22
-    layer = 10
-    expert_selection_file = f"expert_routing/processed_qwen/continuous_batching_80gb_max4192_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 22
+    l_id =10
+    expert_selection_file = f"expert_routing/processed_qwen/continuous_batching_80gb_max4192_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -934,7 +934,7 @@ def test_gemm_sweep():
             print(dict_to_append)
             results.append(dict_to_append)
 
-    out_file = f"qwen_{model_config.dim}_{model_config.moe_inter_dim}_80gb_max4192_iter{iter:03d}_layer_{layer:03d}_n{tile_N}_f{tile_F}.csv"
+    out_file = f"qwen_{model_config.dim}_{model_config.moe_inter_dim}_80gb_max4192_i{i_id:03d}_l_{l_id:03d}_n{tile_N}_f{tile_F}.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
@@ -975,9 +975,9 @@ def test_gemm_sweep_L0():
     ]  # For the model_config.moe_inter_dim (48)
 
     # ------------ Expert Indices ------------
-    iter = 22
-    layer = 0
-    expert_selection_file = f"expert_routing/processed_qwen/continuous_batching_80gb_max4192_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 22
+    l_id =0
+    expert_selection_file = f"expert_routing/processed_qwen/continuous_batching_80gb_max4192_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -1078,7 +1078,7 @@ def test_gemm_sweep_L0():
             print(dict_to_append)
             results.append(dict_to_append)
 
-    out_file = f"qwen_{model_config.dim}_{model_config.moe_inter_dim}_80gb_max4192_iter{iter:03d}_layer_{layer:03d}_n{tile_N}_f{tile_F}.csv"
+    out_file = f"qwen_{model_config.dim}_{model_config.moe_inter_dim}_80gb_max4192_i{i_id:03d}_l_{l_id:03d}_n{tile_N}_f{tile_F}.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
@@ -1121,9 +1121,9 @@ def test_gemm_sweep_wo_sim():
     ]  # For the model_config.moe_inter_dim (768)
 
     # ------------ Expert Indices ------------
-    iter = 22
-    layer = 10
-    expert_selection_file = f"expert_routing/processed_qwen/continuous_batching_80gb_max4192_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 22
+    l_id =10
+    expert_selection_file = f"expert_routing/processed_qwen/continuous_batching_80gb_max4192_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -1224,7 +1224,7 @@ def test_gemm_sweep_wo_sim():
             print(dict_to_append)
             results.append(dict_to_append)
 
-    out_file = f"no_sim_qwen_{model_config.dim}_{model_config.moe_inter_dim}_80gb_max4192_iter{iter:03d}_layer_{layer:03d}_mn_mk.csv"
+    out_file = f"no_sim_qwen_{model_config.dim}_{model_config.moe_inter_dim}_80gb_max4192_i{i_id:03d}_l_{l_id:03d}_mn_mk.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [

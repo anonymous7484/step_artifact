@@ -55,9 +55,9 @@ def test_gemm_dyn_tile():
 
     # ------------ Expert Indices ------------
     batch = 64
-    iter = 32
-    layer = 12
-    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{iter:03d}_{layer:03d}.npz"
+    i_id = 32
+    l_id =12
+    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -83,7 +83,7 @@ def test_gemm_dyn_tile():
         out_file = (
             f"./dyn_tiling/"
             + f"qwen_{model_config.dim}_{model_config.moe_inter_dim}_"
-            + f"round_{round_N}_iter{iter:03d}_layer_{layer:03d}_"
+            + f"round_{round_N}_i{i_id:03d}_l_{l_id:03d}_"
             + f"n_dyn_f{tile_F}_{time.strftime("%d%H%M%S")}.csv"
         )
         # out_file = None
@@ -230,9 +230,9 @@ def test_gemm_revet_sweep():
 
     # ------------ Expert Indices ------------
     batch = 64
-    iter = 32
-    layer = 12
-    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{iter:03d}_{layer:03d}.npz"
+    i_id = 32
+    l_id =12
+    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -259,7 +259,7 @@ def test_gemm_revet_sweep():
             out_file = (
                 f"./dyn_tiling/"
                 + f"qwen_{model_config.dim}_{model_config.moe_inter_dim}_"
-                + f"iter{iter:03d}_layer_{layer:03d}_n{tile_N}_f{tile_F}_revet_"
+                + f"i{i_id:03d}_l_{l_id:03d}_n{tile_N}_f{tile_F}_revet_"
                 + f"{time.strftime("%d%H%M%S")}.csv"
             )
             # out_file = None
@@ -391,9 +391,9 @@ def test_qwen_b64():
 
     # ------------ Expert Indices ------------
     batch = 64
-    iter = 32
-    layer = 12
-    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{iter:03d}_{layer:03d}.npz"
+    i_id = 32
+    l_id =12
+    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b{batch}/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]

@@ -49,3 +49,4 @@ RUN curl -L -o /tmp/bsc.tar.gz \
 ENV PATH="/opt/bluespec/bin:${PATH}"
 
 RUN echo "source /root/step_artifact/venv/bin/activate" >> /root/.bashrc
+RUN echo 'export PYTHONPATH=/root/step_artifact/src:/root/step_artifact/src/step_py:/root/step_artifact/src/sim:/root/step_artifact/src/proto:$PYTHONPATH' >> /root/.bashrc

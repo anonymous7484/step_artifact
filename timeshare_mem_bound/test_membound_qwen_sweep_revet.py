@@ -869,9 +869,9 @@ def test_timeshare_mn_mk_gemm_reshape():
     flops_for_weighted_sum = 1024  # fixed among sweep
 
     # ------------ Expert Indices ------------
-    iter = 32
-    layer = 12
-    expert_selection_file = f"expert_routing/processed_qwen/expr_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 32
+    l_id =12
+    expert_selection_file = f"expert_routing/processed_qwen/expr_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -1007,7 +1007,7 @@ def test_timeshare_mn_mk_gemm_reshape():
     out_file = (
         f"timeshare_mem_bound/"
         + f"qwen_{model_config.dim}_{model_config.moe_inter_dim}_"
-        + f"iter{iter:03d}_layer_{layer:03d}_n{tile_N}_f{tile_F}_"
+        + f"i{i_id:03d}_l_{l_id:03d}_n{tile_N}_f{tile_F}_"
         + f"timeshare_membound_revet_"
         + f"{time.strftime("%d%H%M%S")}.csv"
     )
@@ -1056,9 +1056,9 @@ def test_baseline_for_membound_timeshare():
     flops_for_weighted_sum = 1024  # fixed among sweep
 
     # ------------ Expert Indices ------------
-    iter = 32
-    layer = 12
-    expert_selection_file = f"expert_routing/processed_qwen/expr_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 32
+    l_id =12
+    expert_selection_file = f"expert_routing/processed_qwen/expr_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -1168,7 +1168,7 @@ def test_baseline_for_membound_timeshare():
     out_file = (
         f"timeshare_mem_bound/"
         + f"qwen_{model_config.dim}_{model_config.moe_inter_dim}_"
-        + f"iter{iter:03d}_layer_{layer:03d}_n{tile_N}_f{tile_F}_"
+        + f"i{i_id:03d}_l_{l_id:03d}_n{tile_N}_f{tile_F}_"
         + f"timeshare_membound_baseline_revet_"
         + f"{time.strftime("%d%H%M%S")}.csv"
     )
@@ -1234,9 +1234,9 @@ def test_static_tile():
 
 
     # ------------ Expert Indices ------------
-    iter = 32
-    layer = 12
-    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b64/{iter:03d}_{layer:03d}.npz"
+    i_id = 32
+    l_id =12
+    expert_selection_file = f"./dyn_tiling/expert_routing/qwen_b64/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]

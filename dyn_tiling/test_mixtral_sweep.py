@@ -50,9 +50,9 @@ def test_gemm_sweep():
     tile_Fs = [64]  # For the model_config.moe_inter_dim
 
     # ------------ Expert Indices ------------
-    iter = 8
-    layer = 10
-    expert_selection_file = f"expert_routing/processed_mixtral/expr_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 8
+    l_id =10
+    expert_selection_file = f"expert_routing/processed_mixtral/expr_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -156,7 +156,7 @@ def test_gemm_sweep():
 
             out_file = (
                 f"./dyn_tiling/mixtral_{model_config.dim}_"
-                + f"{model_config.moe_inter_dim}_iter{iter:03d}_layer_{layer:03d}_"
+                + f"{model_config.moe_inter_dim}_i{i_id:03d}_l_{l_id:03d}_"
                 + f"n{tile_N}_f{tile_F}_{time.strftime("%d%H%M%S")}.csv"
             )
             try:
@@ -197,9 +197,9 @@ def test_gemm_dyn_tile():
     tile_Fs = [64]  # For the model_config.moe_inter_dim
 
     # ------------ Expert Indices ------------
-    iter = 8
-    layer = 10
-    expert_selection_file = f"expert_routing/processed_mixtral/expr_per_layer/{iter:03d}_{layer:03d}.npz"
+    i_id = 8
+    l_id =10
+    expert_selection_file = f"expert_routing/processed_mixtral/expr_per_layer/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
@@ -314,7 +314,7 @@ def test_gemm_dyn_tile():
 
         out_file = (
             f"./dyn_tiling/mixtral_{model_config.dim}_"
-            + f"{model_config.moe_inter_dim}_round_{round_N}_iter{iter:03d}_layer_{layer:03d}_"
+            + f"{model_config.moe_inter_dim}_round_{round_N}_i{i_id:03d}_l_{l_id:03d}_"
             + f"n_dyn_f{tile_F}_{time.strftime("%d%H%M%S")}.csv"
         )
         try:
@@ -350,9 +350,9 @@ def test_mixtral_b64():
 
 
     # ------------ Expert Indices ------------
-    iter = 8
-    layer = 10
-    expert_selection_file = f"./dyn_tiling/expert_routing/mixtral_b64/{iter:03d}_{layer:03d}.npz"
+    i_id = 8
+    l_id =10
+    expert_selection_file = f"./dyn_tiling/expert_routing/mixtral_b64/{i_id:03d}_{l_id:03d}.npz"
     expert_indices_npz = np.load(expert_selection_file)
     expert_indices = torch.from_numpy(
         expert_indices_npz["data"]
