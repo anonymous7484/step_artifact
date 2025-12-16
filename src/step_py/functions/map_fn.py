@@ -26,7 +26,6 @@ class Matmul(MapFn):
     If `weight_transposed` is False, the tile shapes should be [M,K], [K,N]
     """
 
-    # [Genghan] We need output dtype?
     weight_transposed: bool
 
     def __init__(self, weight_transposed: bool = False):
@@ -73,7 +72,6 @@ class DynMatmul(MapFn):
     If `weight_transposed` is False, the tile shapes should be [M,K], [K,N]
     """
 
-    # [Genghan] We need output dtype?
     weight_transposed: bool
 
     def __init__(self, weight_transposed: bool = False):

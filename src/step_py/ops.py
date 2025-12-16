@@ -1000,7 +1000,6 @@ class BinaryMapAccum(StepOps):
     compute_bw: int
     _stream: Stream
 
-    # [Genghan] We need an init function?
     def __init__(
         self,
         graph: MultiDiGraph,
@@ -1513,7 +1512,6 @@ class DynStreamify(StepOps):
     _stream: Stream
     off_chip: bool
 
-    # [Genghan] There is an ExpandRef hidden in the operation
     def __init__(
         self,
         graph: MultiDiGraph,
@@ -1799,7 +1797,7 @@ class FlatPartition(StepOps):
         graph.add_edge(control_node, self)
 
         in_stream: Stream = get_stream(input)
-        # [Genghan] A trick: StepOps should use the same control_node to align the outermost dimension
+        # A trick: StepOps should use the same control_node to align the outermost dimension
         new_names = [
             sympy.Symbol(f"{str(control_node)}_{i:03d}", integer=True, nonnegative=True)
             for i in range(num_consumers)
