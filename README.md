@@ -475,3 +475,147 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
                 |_ batch80_sweep_ae.csv
                 |_ figure11.pdf
         ```
+
+## [Optional] To customise or extend the toolchain
+
+As an abstraction, STeP is not tied to a specific hardware implementation and is portable across diverse Spatial Dataflow Accelerator (SDA) implementations with software-managed scratchpads (similar to [The Sparse Abstract Machine](https://dl.acm.org/doi/10.1145/3582016.3582051).)
+We will walk through how the symbolic Python frontend (`src` folder) and the simulator (`step-perf`) can be customized or extended.
+
+### Symbolic frontend
+
+* Changing existing equations for off-chip traffic and on-chip memory requirement:
+  * The symbolic frontend implements symbolic expressions for off-chip memory traffic and on-chip memory requirements for each operator using SymPy.
+  * The expressions can be customized to capture hardware-specific operator details, such as hardware tile sizes and matrix-multiplication implementation. For example, below is the symbolic expression equation for `LinearOffChipLoad`. While we multiply 2 assuming double buffering, one can change it to multiply only 1 if the target SDA does not support double buffering.
+
+    ```python
+    def off_chip_traffic(self) -> sympy.Expr:
+        """Return the off-chip traffic for this operation."""
+        total_elements = self._stream.total_elements() * sympy.Integer(
+            self.tile_row * self.tile_col * self.n_byte
+        )
+        return total_elements
+
+    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+        """Return the on-chip memory requirement for this operation."""
+        return sympy.Integer(self.tile_row * self.tile_col * self.n_byte * 2)
+    ```
+
+* Equations for other metrics:
+  * The frontend includes equations for off-chip traffic and on-chip memory usage as the applications we experimented are (off-chip) memory-bound. However, if performance bottlenecks shift, additional cost functions can be added to STeP operators to obtain performance-correlated metrics (e.g. on-chip traffic, compute). For example, if the bottleneck shifts to the boundary between on-chip memory and PE storage, the programmer can update the base class for the STeP operators to include a function for on-chip memory traffic and implement them for the STeP operators.
+
+    ```python
+    class StepOps(ABC):
+        _counter: int = 0
+        instance_id: int
+
+        ...
+
+        @abstractmethod
+        def on_chip_traffic(self, count_fifos: bool = False) -> sympy.Expr:
+            """Return the on-chip memory traffic for this operation."""
+            pass
+
+        @abstractmethod
+        def off_chip_traffic(self) -> sympy.Expr:
+            """Return the off-chip traffic (bytes) for this operation."""
+            pass
+    ```
+
+### Simulator
+
+The simulator builds on top of the [Dataflow Abstract Machine simulation framework (DAM)](https://ieeexplore.ieee.org/document/10609587). Each STeP operator is implemented as a *context* in DAM and FIFOs are implemented using DAM's *channels*.
+
+* Operator initiation intervals and latencies can be adjusted to match hardware characteristics. For example, below is an example context definition for Map:
+
+    ```rust
+    #[context_macro]
+    pub struct Map<E, T: DAMType, OT: DAMType> {
+        in_stream: Receiver<Elem<Tile<T>>>,
+        out_stream: Sender<Elem<Tile<OT>>>,
+        func: Arc<dyn Fn(&Tile<T>, u64, bool) -> (u64, Tile<OT>) + Send + Sync>, // bytes, FLOPs per cycle -> cycles
+        config: MapConfig,
+        id: u32,
+        _phantom: PhantomData<E>,
+    }
+
+    ```
+
+    The timing behavior of the operator is implemented in the `run` function for each context. As we use Roofline model in our simulator, it calculates the latency based on the input data and the function and increments the time of the node by the latency calculated.
+
+    ```rust
+    impl<
+            E: LoggableEventSimple + LogEvent + std::marker::Sync + std::marker::Send,
+            T: DAMType,
+            OT: DAMType,
+        > Context for Map<E, T, OT>
+    where
+        Elem<Tile<T>>: DAMType,
+        Elem<Tile<OT>>: DAMType,
+    {
+        fn run(&mut self) {
+            loop {
+                let in_elem = self.in_stream.peek_next(&self.time);
+                let (in_tile, stop_lev) = match in_elem {
+                    ...
+                };
+
+                let start_time = self.time.tick().time();
+                let load_cycles = if in_tile.read_from_mu {
+                    div_ceil(in_tile.size_in_bytes() as u64, PMU_BW)
+                } else {
+                    0
+                };
+
+                let (comp_cycles, out_tile) =
+                    (self.func)(&in_tile, self.config.compute_bw, self.config.write_back_mu);
+                let store_cycles = if self.config.write_back_mu {
+                    div_ceil(out_tile.size_in_bytes() as u64, PMU_BW)
+                } else {
+                    0
+                };
+
+                let roofline_cycles = [load_cycles, comp_cycles, store_cycles]
+                    .into_iter()
+                    .max()
+                    .unwrap_or(0);
+
+                self.time.incr_cycles(roofline_cycles); // <= Latency
+
+                let data = match stop_lev {
+                    Some(level) => Elem::ValStop(out_tile, level),
+                    None => Elem::Val(out_tile),
+                };
+                self.out_stream
+                    .enqueue(
+                        &self.time,
+                        ChannelElement {
+                            time: self.time.tick(), // <= time the result appears in the output FIFO
+                            data: data,
+                        },
+                    )
+                    .unwrap();
+
+                self.in_stream.dequeue(&self.time).unwrap();
+            }
+        }
+    }
+    ```
+
+* Different memory technologies:
+  * Different memory technologies can be integrated by building a DAM context that makes library calls to the memory simulator (e.g., Ramulator2).
+  * As shown below, STeP's off-chip memory operators includes channels that communicate with the memory simulator. The programmer has to connect a channel pair (`addr_snd`, `resp_addr_rcv`) between the memory simulator and STeP's offchip memory operators.
+
+    ```rust
+    #[context_macro]
+    pub struct OffChipLoad<E: LoggableEventSimple, T: DAMType> {
+        ...
+        // Sender & Receiver (DAM details)
+        pub addr_snd: Sender<ParAddrs>,   // => to memory simulator
+        pub resp_addr_rcv: Receiver<u64>, // <= from memory simulator
+        pub on_chip_snd: Sender<Elem<Tile<T>>>, // => on chip memory unit
+        pub id: u32,
+        _phantom: PhantomData<E>, // Needed to use the generic parameter E
+    }
+    ```
+
+  * The off-chip memory operator simulates the memory access delays by sending an address to the DAM context for the memory simulator and then sending the data to the next unit once it receives a response from the memory simulator through the  `resp_addr_rcv` channel for that address.
