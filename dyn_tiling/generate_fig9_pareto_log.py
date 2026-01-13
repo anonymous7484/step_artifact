@@ -403,8 +403,8 @@ def create_pareto_plot(csv_files, subplot_titles, figsize=(20, 9),
 
 # Example usage
 csv_files = [
-    './dyn_tiling/figure_6_mixtral_b64_raw.csv',
-    './dyn_tiling/figure_6_qwen_b64_raw.csv',
+    './dyn_tiling/figure_9_mixtral_b64_raw.csv',
+    './dyn_tiling/figure_9_qwen_b64_raw.csv',
 ]
 
 subplot_titles = [

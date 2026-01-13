@@ -90,21 +90,23 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
         |_timeshare_mem_bound
     ```
 
-    * Figure 5: The reproduced figure and experiment results can be found in the `step-artifact-eval` folder. The `validation.pdf` should match Figure 5 in the paper. The values used to create the plot are in the other two CSV files in the `step-artifact-eval` folder.
+    * Figure 8: The reproduced figure and experiment results can be found in the `step-artifact-eval` folder. The `validation.pdf` should match Figure 5 in the paper. The values used to create the plot are in the other two CSV files in the `step-artifact-eval` folder.
 
-    * Figure 6: The reproduced figure and experiment results can be found in the `dyn_tiling` folder. The file `figure6.pdf` should match Figure 6 in the paper. The values used for creating the plot can be found in`figure_6_mixtral_b64.csv` and `figure_6_qwen_b64.csv`.
+    * Figure 9: The reproduced figure and experiment results can be found in the `dyn_tiling` folder. The file `figure9.pdf` should match Figure 9 in the paper. The values used for creating the plot can be found in`figure_9_mixtral_b64.csv` and `figure_9_qwen_b64.csv`.
 
-    * Figure 7: The reproduced figure and experiment results can be found in the `dyn_tiling` folder.  The file `figure7.pdf` should match Figure 7 in the paper. The values used for creating the plot can be found in `figure_7_mixtral_b1024.csv` and `figure_7_qwen_b1024.csv`.
+    * Figure 10: The reproduced figure and experiment results can be found in the `dyn_tiling` folder.  The file `figure10.pdf` should match Figure 10 in the paper. The values used for creating the plot can be found in `figure_10_mixtral_b1024.csv` and `figure_10_qwen_b1024.csv`.
 
-    * Figure 8: The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure8.pdf` should match Figure 8 in the paper. The values used to create the plot are in `fig_8_a.csv` and `fig_8_b.csv`.
+    * Figure 12: The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure12.pdf` should match Figure 12 in the paper. The values used to create the plot are in `fig_8_a.csv` and `fig_8_b.csv`.
 
-    * Figure 9: The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure9.pdf` should match Figure 9 in the paper. The values used to create the plot are in `fig_9_a.csv` and `fig_9_b.csv`.
+    * Figure 13: The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure13.pdf` should match Figure 13 in the paper. The values used to create the plot are in `fig_9_a.csv` and `fig_9_b.csv`.
 
-    * Figure 11: The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure11.pdf` should match Figure 11 in the paper. The values used for creating the plot can be found in the other three CSV files in the `dynamic_par` folder.
+    * Figure 14: The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure14.pdf` should match Figure 14 in the paper. The values used for creating the plot can be found in the other three CSV files in the `dynamic_par` folder.
+
+    * Figure 15: The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure15.pdf` should match Figure 15 in the paper. The values used for creating the plot can be found in the other three CSV files in the `dynamic_par` folder.
 
 ## [Optional] Detailed Explanation of What the Top-Level Script Does
 
-### Run and Validate Figure 5 (10 human-minutes + 2 compute-hours)
+### Run and Validate Figure 8 (10 human-minutes + 2 compute-hours)
 
 * Run the following commands:
     1. Generates the STeP Simulator numbers (organe dots) in Figure 5. The numbers will be stored in `/root/step_artifact/hdl_validation/fig5.csv`.
@@ -164,7 +166,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
 
         ```
 
-### Run and Validate Figure 6 (5 human-minutes + 80 compute-minutes)
+### Run and Validate Figure 9 (5 human-minutes + 80 compute-minutes)
 
 * Run the following commands
 
@@ -172,202 +174,20 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     ### In the docker container ###
     cd /root/step_artifact/
     source setup.sh
-    pytest dyn_tiling/test_mixtral_sweep.py::test_mixtral_b64
-    # Produced file: step_artifact/dyn_tiling/figure_6_mixtral_b64.csv
+    pytest dyn_tiling/test_qwen_sweep_revision.py::test_qwen_b64_ablation # 
+    # Produced file: step_artifact/dyn_tiling/figure_9_qwen_b64_raw.csv
 
-    pytest dyn_tiling/test_qwen_sweep.py::test_qwen_b64
-    # Produced file: step_artifact/dyn_tiling/figure_6_qwen_b64.csv
+    python dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64 # 
+    # Produced file: step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv
 
-    python dyn_tiling/generate_fig6.py
-    # Produced file: step_artifact/dyn_tiling/figure6.pdf
-    # Produced file: step_artifact/dyn_tiling/figure6.png
+    python dyn_tiling/generate_fig9_pareto_log.py
+    # Produced file: step_artifact/dyn_tiling/figure9.pdf
 
-    echo "figure 6 done"
+    echo "figure 9 done"
     ```
 
-  * The `test_mixtral_b64` will run the left portion of figure 6 (Mixtral8x7B) and produce `step_artifact/dyn_tiling/figure_6_mixtral_b64.csv`.
-  * The `test_qwen_b64` will run the right portion of figure 6 (Qwen3-30B-A3B) and produce `step_artifact/dyn_tiling/figure_6_qwen_b64.csv`.
-
-* To validate the results:
-    1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
-
-        ```bash
-        # Exit the docker (CTRL+p, CTRL+q)
-        
-        ### In the local machine ###
-        $ cd step_artifact
-        ```
-
-    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 6 as follows:
-
-        ```python
-        FILES_TO_COPY = [
-            "step_artifact/dyn_tiling/figure_6_mixtral_b64.csv",
-            "step_artifact/dyn_tiling/figure_6_qwen_b64.csv",
-            "step_artifact/dyn_tiling/figure6.pdf",
-        ]
-        ```
-
-    3. Run the following command. This will copy the experiment results and figures from the container. The results and figures will be copied to `step_artifact/<OUTPUT_DIRECTORY>`.
-
-        ```bash
-        ### In the local machine ###
-        $ mkdir -p <OUTPUT_DIRECTORY>  # This will be the argument for the --output_dir in the following line
-        $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
-        ```
-
-    4. The reproduced figure and experiment results can be found in the `dyn_tiling` folder. The file `figure6.pdf` should match Figure 6 in the paper. The values used for creating the plot can be found in`figure_6_mixtral_b64.csv` and `figure_6_qwen_b64.csv`.
-
-        ```
-        step_artifact/<OUTPUT_DIRECTORY>
-        |_step_artifact
-            |_dyn_tiling
-                |_ figure_6_mixtral_b64.csv
-                |_ figure_6_qwen_b64.csv
-                |_ figure6.pdf
-        ```
-
-### Run and Validate Figure 7 (5 human-minutes + 150 compute-minutes)
-
-* Run the following commands
-
-    ```bash
-    ### In the docker container ###
-    cd /root/step_artifact/
-    source setup.sh
-    pytest dyn_tiling/test_mixtral_sweep_prefill.py::test_mixtral_b1024
-    # Produced file: step_artifact/dyn_tiling/figure_7_mixtral_b1024.csv
-
-    pytest dyn_tiling/test_qwen_sweep_prefill.py::test_qwen_b1024
-    # Produced file: step_artifact/dyn_tiling/figure_7_qwen_b1024.csv
-
-    python dyn_tiling/generate_fig7.py
-    # Produced file: step_artifact/dyn_tiling/figure7.pdf
-    # Produced file: step_artifact/dyn_tiling/figure7.png
-
-    echo "figure 7 done"
-    ```
-
-  * The `test_mixtral_b1024` will run the left portion of figure 7 (Mixtral8x7B) and produce `step_artifact/dyn_tiling/figure_7_mixtral_b1024.csv`.
-  * The `test_qwen_b1024` will run the right portion of figure 7 (Qwen3-30B-A3B) and produce `step_artifact/dyn_tiling/figure_7_qwen_b1024.csv`.
-
-* To validate the results:
-    1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
-
-        ```bash
-        # Exit the docker (CTRL+p, CTRL+q)
-        
-        ### In the local machine ###
-        $ cd step_artifact
-        ```
-
-    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 7 as follows:
-
-        ```python
-        FILES_TO_COPY = [
-            "step_artifact/dyn_tiling/figure_7_mixtral_b1024.csv",
-            "step_artifact/dyn_tiling/figure_7_qwen_b1024.csv",
-            "step_artifact/dyn_tiling/figure7.pdf",
-        ]
-        ```
-
-    3. Run the following command. This will copy the experiment results and figures from the container. The results and figures will be copied to `step_artifact/<OUTPUT_DIRECTORY>`.
-
-        ```bash
-        ### In the local machine ###
-        $ mkdir -p <OUTPUT_DIRECTORY>  # This will be the argument for the --output_dir in the following line
-        $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
-        ```
-
-    4. The reproduced figure and experiment results can be found in the `dyn_tiling` folder.  The file `figure7.pdf` should match Figure 7 in the paper. The values used for creating the plot can be found in `figure_7_mixtral_b1024.csv` and `figure_7_qwen_b1024.csv`.
-
-        ```
-        step_artifact/<OUTPUT_DIRECTORY>
-        |_step_artifact
-            |_dyn_tiling
-                |_ figure_7_mixtral_b1024.csv
-                |_ figure_7_qwen_b1024.csv
-                |_ figure7.pdf
-        ```
-
-### Run and Validate Figure 8 (5 human-minutes + 100 compute-minutes)
-
-* Run the following commands
-
-    ```bash
-    ### In the docker container ###
-    cd /root/step_artifact/
-    source setup.sh
-    pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_tile
-    # Produced files: step_artifact/timeshare_mem_bound/fig_8_a.csv, 
-
-    pytest timeshare_mem_bound/test_membound_qwen_sweep_dyn_tile.py::test_dyn_tile
-    # Produced files: step_artifact/timeshare_mem_bound/fig_8_b.csv
-
-    python timeshare_mem_bound/generate_fig8.py 
-    # Produced file: step_artifact/timeshare_mem_bound/figure8.pdf
-    ```
-
-  * The `test_static_tile` will run experiments for figure 8(a) and produce `step_artifact/timeshare_mem_bound/fig_8_a.csv`.
-  * The `test_dyn_tile` will run experiments for figure 8(b) and produce `step_artifact/timeshare_mem_bound/fig_8_b.csv`.
-
-* To validate the results:
-    1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
-
-        ```bash
-        # Exit the docker (CTRL+p, CTRL+q)
-        
-        ### In the local machine ###
-        $ cd step_artifact
-        ```
-
-    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 8 as follows:
-
-        ```python
-        FILES_TO_COPY = [
-            "step_artifact/timeshare_mem_bound/fig_8_a.csv",
-            "step_artifact/timeshare_mem_bound/fig_8_b.csv",
-            "step_artifact/timeshare_mem_bound/figure8.pdf",
-        ]
-        ```
-
-    3. Run the following command. This will copy the experiment results and figures from the container. The results and figures will be copied to `step_artifact/<OUTPUT_DIRECTORY>`.
-
-        ```bash
-        ### In the local machine ###
-        $ mkdir -p <OUTPUT_DIRECTORY>  # This will be the argument for the --output_dir in the following line
-        $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
-        ```
-
-    4. The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure8.pdf` should match Figure 8 in the paper. The values used to create the plot are in `fig_8_a.csv` and `fig_8_b.csv`.
-
-        ```
-        step_artifact/<OUTPUT_DIRECTORY>
-        |_step_artifact
-            |timeshare_mem_bound
-                |_ fig_8_a.csv
-                |_ fig_8_b.csv
-                |_ figure8.pdf
-        ```
-
-### Run and Validate Figure 9 (5 human-minutes + 50 compute-minutes)
-
-* Run the following commands
-
-    ```bash
-    ### In the docker container ###
-    cd /root/step_artifact/
-    source setup.sh
-    pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_tile
-    # Produced files: step_artifact/timeshare_mem_bound/fig_9_a.csv,
-    #                 step_artifact/timeshare_mem_bound/fig_9_b.csv
-
-    python timeshare_mem_bound/generate_fig9.py 
-    # Produced file: step_artifact/timeshare_mem_bound/figure9.pdf
-
-    ```
-
-  * The `test_static_tile` will run experiments for figure 9 and produce `step_artifact/timeshare_mem_bound/fig_9_a.csv` and `step_artifact/timeshare_mem_bound/fig_9_b.csv`.
+  * The `test_mixtral_b64` will run the left portion of figure 9 (Mixtral8x7B) and produce `step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv`.
+  * The `test_qwen_b64_ablation` will run the right portion of figure 9 (Qwen3-30B-A3B) and produce `step_artifact/dyn_tiling/figure_9_qwen_b64_raw.csv`.
 
 * To validate the results:
     1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
@@ -383,9 +203,9 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
 
         ```python
         FILES_TO_COPY = [
-            "step_artifact/timeshare_mem_bound/fig_9_a.csv",
-            "step_artifact/timeshare_mem_bound/fig_9_b.csv",
-            "step_artifact/timeshare_mem_bound/figure9.pdf",
+            "step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv",
+            "step_artifact/dyn_tiling/figure_9_qwen_b64_raw.csv",
+            "step_artifact/dyn_tiling/figure9.pdf",
         ]
         ```
 
@@ -397,18 +217,313 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
         $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
         ```
 
-    4. The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure9.pdf` should match Figure 9 in the paper. The values used to create the plot are in `fig_9_a.csv` and `fig_9_b.csv`.
+    4. The reproduced figure and experiment results can be found in the `dyn_tiling` folder. The file `figure9.pdf` should match Figure 9 in the paper. The values used for creating the plot can be found in`figure_9_mixtral_b64.csv` and `figure_9_qwen_b64.csv`.
 
         ```
         step_artifact/<OUTPUT_DIRECTORY>
         |_step_artifact
-            |timeshare_mem_bound
-                |_ fig_9_a.csv
-                |_ fig_9_b.csv
+            |_dyn_tiling
+                |_ figure_9_mixtral_b64_raw.csv
+                |_ figure_9_qwen_b64_raw.csv
                 |_ figure9.pdf
         ```
 
-### Run and Validate Figure 11 (5 human-minutes + 15 compute-minutes)
+### Run and Validate Figure 10 (5 human-minutes + 150 compute-minutes)
+
+* Run the following commands
+
+    ```bash
+    ### In the docker container ###
+    cd /root/step_artifact/
+    pytest dyn_tiling/test_mixtral_sweep_prefill_revision.py::test_mixtral_b1024 
+    # Produced file: step_artifact/dyn_tiling/figure_10_mixtral_b1024_raw.csv
+
+    pytest dyn_tiling/test_qwen_sweep_prefill_revision.py::test_qwen_b1024_ablation
+    # Produced file: step_artifact/dyn_tiling/figure_10_qwen_b1024_raw.csv
+
+    python dyn_tiling/generate_fig10_pareto_log.py
+    # Produced file: step_artifact/dyn_tiling/figure10.pdf
+
+    echo "figure 10 done"
+    ```
+
+  * The `test_mixtral_b1024` will run the left portion of figure 10 (Mixtral8x7B) and produce `step_artifact/dyn_tiling/figure_10_mixtral_b1024_raw.csv`.
+  * The `test_qwen_b1024_ablation` will run the right portion of figure 10 (Qwen3-30B-A3B) and produce `step_artifact/dyn_tiling/figure_10_qwen_b1024_raw.csv`.
+
+* To validate the results:
+    1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
+
+        ```bash
+        # Exit the docker (CTRL+p, CTRL+q)
+        
+        ### In the local machine ###
+        $ cd step_artifact
+        ```
+
+    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 10 as follows:
+
+        ```python
+        FILES_TO_COPY = [
+            "step_artifact/dyn_tiling/figure_10_mixtral_b1024_raw.csv",
+            "step_artifact/dyn_tiling/figure_10_qwen_b1024_raw.csv",
+            "step_artifact/dyn_tiling/figure10.pdf",
+        ]
+        ```
+
+    3. Run the following command. This will copy the experiment results and figures from the container. The results and figures will be copied to `step_artifact/<OUTPUT_DIRECTORY>`.
+
+        ```bash
+        ### In the local machine ###
+        $ mkdir -p <OUTPUT_DIRECTORY>  # This will be the argument for the --output_dir in the following line
+        $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
+        ```
+
+    4. The reproduced figure and experiment results can be found in the `dyn_tiling` folder.  The file `figure10.pdf` should match Figure 10 in the paper. The values used for creating the plot can be found in `figure_10_mixtral_b1024_raw.csv` and `figure_10_qwen_b1024_raw.csv`.
+
+        ```
+        step_artifact/<OUTPUT_DIRECTORY>
+        |_step_artifact
+            |_dyn_tiling
+                |_ figure_10_mixtral_b1024_raw.csv
+                |_ figure_10_qwen_b1024_raw.csv
+                |_ figure10.pdf
+        ```
+
+### Run and Validate Figure 12 (5 human-minutes + 100 compute-minutes)
+
+* Run the following commands
+
+    ```bash
+    ### In the docker container ###
+    cd /root/step_artifact/
+    source setup.sh
+    pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_tile
+    # Produced files: step_artifact/timeshare_mem_bound/fig_8_a.csv, 
+    #                 step_artifact/timeshare_mem_bound/fig_9_a.csv,
+    #                 step_artifact/timeshare_mem_bound/fig_9_b.csv
+
+    pytest timeshare_mem_bound/test_membound_qwen_sweep_dyn_tile.py::test_dyn_tile
+    # Produced files: step_artifact/timeshare_mem_bound/fig_8_b.csv
+
+    python timeshare_mem_bound/generate_fig12.py 
+    # Produced file: step_artifact/timeshare_mem_bound/figure12.pdf
+    ```
+
+  * The `test_static_tile` will run experiments for figure 12(a) and produce `step_artifact/timeshare_mem_bound/fig_8_a.csv`.
+  * The `test_dyn_tile` will run experiments for figure 12(b) and produce `step_artifact/timeshare_mem_bound/fig_8_b.csv`.
+
+* To validate the results:
+    1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
+
+        ```bash
+        # Exit the docker (CTRL+p, CTRL+q)
+        
+        ### In the local machine ###
+        $ cd step_artifact
+        ```
+
+    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 12 as follows:
+
+        ```python
+        FILES_TO_COPY = [
+            "step_artifact/timeshare_mem_bound/fig_8_a.csv",
+            "step_artifact/timeshare_mem_bound/fig_8_b.csv",
+            "step_artifact/timeshare_mem_bound/figure12.pdf",
+        ]
+        ```
+
+    3. Run the following command. This will copy the experiment results and figures from the container. The results and figures will be copied to `step_artifact/<OUTPUT_DIRECTORY>`.
+
+        ```bash
+        ### In the local machine ###
+        $ mkdir -p <OUTPUT_DIRECTORY>  # This will be the argument for the --output_dir in the following line
+        $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
+        ```
+
+    4. The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure12.pdf` should match Figure 8 in the paper. The values used to create the plot are in `fig_8_a.csv` and `fig_8_b.csv`.
+
+        ```
+        step_artifact/<OUTPUT_DIRECTORY>
+        |_step_artifact
+            |_timeshare_mem_bound
+                |_ fig_8_a.csv
+                |_ fig_8_b.csv
+                |_ figure12.pdf
+        ```
+
+### Run and Validate Figure 13 (5 human-minutes + 50 compute-minutes)
+
+* Run the following commands
+
+    ```bash
+    ### In the docker container ###
+    cd /root/step_artifact/
+    source setup.sh
+    pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_tile
+    # Produced files: step_artifact/timeshare_mem_bound/fig_9_a.csv,
+    #                 step_artifact/timeshare_mem_bound/fig_9_b.csv
+
+    python timeshare_mem_bound/generate_fig13.py 
+    # Produced file: step_artifact/timeshare_mem_bound/figure13.pdf
+
+    ```
+
+  * The `test_static_tile` will run experiments for figure 13 and produce `step_artifact/timeshare_mem_bound/fig_9_a.csv` and `step_artifact/timeshare_mem_bound/fig_9_b.csv`.
+
+* To validate the results:
+    1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
+
+        ```bash
+        # Exit the docker (CTRL+p, CTRL+q)
+        
+        ### In the local machine ###
+        $ cd step_artifact
+        ```
+
+    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 13 as follows:
+
+        ```python
+        FILES_TO_COPY = [
+            "step_artifact/timeshare_mem_bound/fig_9_a.csv",
+            "step_artifact/timeshare_mem_bound/fig_9_b.csv",
+            "step_artifact/timeshare_mem_bound/figure13.pdf",
+        ]
+        ```
+
+    3. Run the following command. This will copy the experiment results and figures from the container. The results and figures will be copied to `step_artifact/<OUTPUT_DIRECTORY>`.
+
+        ```bash
+        ### In the local machine ###
+        $ mkdir -p <OUTPUT_DIRECTORY>  # This will be the argument for the --output_dir in the following line
+        $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
+        ```
+
+    4. The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure13.pdf` should match Figure 13 in the paper. The values used to create the plot are in `fig_9_a.csv` and `fig_9_b.csv`.
+
+        ```
+        step_artifact/<OUTPUT_DIRECTORY>
+        |_step_artifact
+            |_timeshare_mem_bound
+                |_ fig_9_a.csv
+                |_ fig_9_b.csv
+                |_ figure13.pdf
+        ```
+
+### Run and Validate Figure 14 (5 human-minutes + 4 compute-minutes)
+
+* Run the following commands
+
+    ```bash
+    ### In the docker container ###
+    cd /root/step_artifact/
+    source setup.sh
+    pytest dynamic_par/sweep_ae_revision.py::test_b64_sweep # 3m30s
+    # Produced file: step_artifact/dynamic_par/batch64_interleave_dynamic.csv
+
+    python dynamic_par/fig_interleave_dyn.py
+    # Produced file: step_artifact/dynamic_par/figure14.pdf
+
+    echo "figure 14 done"
+
+    ```
+
+  * The `test_b64_sweep` will run experiments for figure 14 and produce `step_artifact/dynamic_par/batch64_interleave_dynamic.csv`.
+
+* To validate the results:
+    1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
+
+        ```bash
+        # Exit the docker (CTRL+p, CTRL+q)
+        
+        ### In the local machine ###
+        $ cd step_artifact
+        ```
+
+    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 14 as follows:
+
+        ```python
+        FILES_TO_COPY = [
+            "step_artifact/dynamic_par/batch64_interleave_dynamic.csv",
+            "step_artifact/dynamic_par/figure14.pdf",
+        ]
+        ```
+
+    3. Run the following command. This will copy the experiment results and figures from the container. The results and figures will be copied to `step_artifact/<OUTPUT_DIRECTORY>`.
+
+        ```bash
+        ### In the local machine ###
+        $ mkdir -p <OUTPUT_DIRECTORY>  # This will be the argument for the --output_dir in the following line
+        $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
+        ```
+
+    4. The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure14.pdf` should match Figure 14 in the paper. The values used to create the plot are in the other three CSV files.
+
+        ```
+        step_artifact/<OUTPUT_DIRECTORY>
+        |_step_artifact
+            |_dynamic_par
+                |_ batch64_interleave_dynamic.csv
+                |_ figure14.pdf
+        ```
+
+### Run and Validate Figure 15 (5 human-minutes + 1 compute-minutes)
+
+* Run the following commands
+
+    ```bash
+    ### In the docker container ###
+    cd /root/step_artifact/
+    source setup.sh
+    pytest dynamic_par/sweep_ae_revision.py::test_batch_sweep # 1m
+    # Produced file: step_artifact/dynamic_par/batch_sweep_coarse_vs_dynamic.csv
+
+    python dynamic_par/fig_coarse_dyn_64.py
+    # Produced file: step_artifact/dynamic_par/figure15.pdf
+
+    echo "figure 15 done"
+
+    ```
+
+  * The `test_batch_sweep` will run experiments for figure 14 and produce `step_artifact/dynamic_par/batch_sweep_coarse_vs_dynamic.csv`.
+
+* To validate the results:
+    1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
+
+        ```bash
+        # Exit the docker (CTRL+p, CTRL+q)
+        
+        ### In the local machine ###
+        $ cd step_artifact
+        ```
+
+    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 15 as follows:
+
+        ```python
+        FILES_TO_COPY = [
+            "step_artifact/dynamic_par/batch_sweep_coarse_vs_dynamic.csv",
+            "step_artifact/dynamic_par/figure15.pdf",
+        ]
+        ```
+
+    3. Run the following command. This will copy the experiment results and figures from the container. The results and figures will be copied to `step_artifact/<OUTPUT_DIRECTORY>`.
+
+        ```bash
+        ### In the local machine ###
+        $ mkdir -p <OUTPUT_DIRECTORY>  # This will be the argument for the --output_dir in the following line
+        $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
+        ```
+
+    4. The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure15.pdf` should match Figure 15 in the paper. The values used to create the plot are in the other three CSV files.
+
+        ```
+        step_artifact/<OUTPUT_DIRECTORY>
+        |_step_artifact
+            |_dynamic_par
+                |_ batch_sweep_coarse_vs_dynamic.csv
+                |_ figure15.pdf
+        ```
+
+### Run and Validate Figure 21 (5 human-minutes + 15 compute-minutes)
 
 * Run the following commands
 
@@ -425,15 +540,15 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     pytest dynamic_par/sweep_ae.py::test_b64_b16_sweep
     # Produced file: step_artifact/dynamic_par/batch80_sweep_ae.csv
 
-    python dynamic_par/fig11.py
-    # Produced file: step_artifact/dynamic_par/figure11.pdf
-    echo "figure 11 done"
+    python dynamic_par/fig21_change_scale.py
+    # Produced file: step_artifact/dynamic_par/figure21.pdf
+    echo "figure 21 done"
 
     ```
 
-  * The `test_b16_sweep` will run experiments for `B = 16` (left) in figure 11 and produce `step_artifact/dynamic_par/batch16_sweep_ae.csv`.
-  * The `test_b64_sweep` will run experiments for `B = 64` (middle) in figure 11 and produce `step_artifact/dynamic_par/batch64_sweep_ae.csv`.
-  * The `test_b16_sweep` will run experiments for `B = 64+16` (right) in figure 11 and produce `step_artifact/dynamic_par/batch80_sweep_ae.csv`.
+  * The `test_b16_sweep` will run experiments for `B = 16` (left) in figure 21 and produce `step_artifact/dynamic_par/batch16_sweep_ae.csv`.
+  * The `test_b64_sweep` will run experiments for `B = 64` (middle) in figure 21 and produce `step_artifact/dynamic_par/batch64_sweep_ae.csv`.
+  * The `test_b16_sweep` will run experiments for `B = 64+16` (right) in figure 21 and produce `step_artifact/dynamic_par/batch80_sweep_ae.csv`.
 
 * To validate the results:
     1. Exit the docker (CTRL+p, CTRL+q) and move into the cloned `step_artifact` repository on the local machine.
@@ -445,14 +560,14 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
         $ cd step_artifact
         ```
 
-    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 11 as follows:
+    2. modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 21 as follows:
 
         ```python
         FILES_TO_COPY = [
             "step_artifact/dynamic_par/batch16_sweep_ae.csv",
             "step_artifact/dynamic_par/batch64_sweep_ae.csv",
             "step_artifact/dynamic_par/batch80_sweep_ae.csv",
-            "step_artifact/dynamic_par/figure11.pdf",
+            "step_artifact/dynamic_par/figure21.pdf",
         ]
         ```
 
@@ -464,7 +579,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
         $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
         ```
 
-    4. The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure11.pdf` should match Figure 11 in the paper. The values used to create the plot are in the other three CSV files.
+    4. The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure21.pdf` should match Figure 21 in the paper. The values used to create the plot are in the other three CSV files.
 
         ```
         step_artifact/<OUTPUT_DIRECTORY>
@@ -473,7 +588,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
                 |_ batch16_sweep_ae.csv
                 |_ batch64_sweep_ae.csv
                 |_ batch80_sweep_ae.csv
-                |_ figure11.pdf
+                |_ figure21.pdf
         ```
 
 ## [Optional] To customise or extend the toolchain

@@ -471,7 +471,7 @@ def test_qwen_b64(i_id_arg=32, l_id_arg=12):
         print(f"Error writing CSV file: {e}")
         
     # save results to csv
-    out_file = f"./dyn_tiling/figure_6_qwen_b{batch}_raw.csv"
+    out_file = f"./dyn_tiling/figure_9_qwen_b{batch}_raw.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [

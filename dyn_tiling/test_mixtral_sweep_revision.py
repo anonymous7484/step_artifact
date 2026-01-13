@@ -296,7 +296,7 @@ def test_mixtral_b64():
 
     ################## Save Results to CSV ##################
 
-    out_file = f"./dyn_tiling/figure_6_mixtral_b64.csv"
+    out_file = f"./dyn_tiling/figure_9_mixtral_b64.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [

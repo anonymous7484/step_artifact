@@ -7,31 +7,39 @@ CONTAINER_ROOT = "/root"
 
 # List of absolute paths inside the container
 FILES_TO_COPY = [
-    # Figure 6
-    "step_artifact/dyn_tiling/figure_6_mixtral_b64.csv",
-    "step_artifact/dyn_tiling/figure_6_qwen_b64.csv",
-    "step_artifact/dyn_tiling/figure6.pdf",
+    # Figure 9
+    "step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv",
+    "step_artifact/dyn_tiling/figure_9_qwen_b64_raw.csv",
+    "step_artifact/dyn_tiling/figure9.pdf",
 
-    # Figure 7
-    "step_artifact/dyn_tiling/figure_7_mixtral_b1024.csv",
-    "step_artifact/dyn_tiling/figure_7_qwen_b1024.csv",
-    "step_artifact/dyn_tiling/figure7.pdf",
+    # Figure 10
+    "step_artifact/dyn_tiling/figure_10_mixtral_b1024_raw.csv",
+    "step_artifact/dyn_tiling/figure_10_qwen_b1024_raw.csv",
+    "step_artifact/dyn_tiling/figure10.pdf",
 
-    # Figure 8 & 9
+    # Figure 12 & 13
     "step_artifact/timeshare_mem_bound/fig_8_a.csv",
     "step_artifact/timeshare_mem_bound/fig_8_b.csv",
     "step_artifact/timeshare_mem_bound/fig_9_a.csv",
     "step_artifact/timeshare_mem_bound/fig_9_b.csv",
-    "step_artifact/timeshare_mem_bound/figure8.pdf",
-    "step_artifact/timeshare_mem_bound/figure9.pdf",
+    "step_artifact/timeshare_mem_bound/figure12.pdf",
+    "step_artifact/timeshare_mem_bound/figure13.pdf",
 
-    # Figure 11
+    # Figure 14
+    "step_artifact/dynamic_par/batch64_interleave_dynamic.csv",
+    "step_artifact/dynamic_par/figure14.pdf",
+
+    # Figure 15
+    "step_artifact/dynamic_par/batch_sweep_coarse_vs_dynamic.csv",
+    "step_artifact/dynamic_par/figure15.pdf",
+
+    # Figure 21
     "step_artifact/dynamic_par/batch16_sweep_ae.csv",
     "step_artifact/dynamic_par/batch64_sweep_ae.csv",
     "step_artifact/dynamic_par/batch80_sweep_ae.csv",
-    "step_artifact/dynamic_par/figure11.pdf",
+    "step_artifact/dynamic_par/figure21.pdf",
 
-    # Figure 5
+    # Figure 8
     "step-artifact-eval/dse_results.csv",
     "step-artifact-eval/step_reference.csv",
     "step-artifact-eval/validation.pdf",

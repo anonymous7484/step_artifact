@@ -7,12 +7,12 @@ source ./hdl_validation/figure5_step.sh
 # Figure 9 
 cd /root/step_artifact/
 pytest dyn_tiling/test_qwen_sweep_revision.py::test_qwen_b64_ablation # 
-# Produced file: step_artifact/dyn_tiling/figure_6_qwen_b64_raw.csv
+# Produced file: step_artifact/dyn_tiling/figure_9_qwen_b64_raw.csv
 
 python dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64 # 
-# Produced file: step_artifact/dyn_tiling/figure_6_mixtral_b64_raw.csv
+# Produced file: step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv
 
-python dyn_tiling/generate_fig6_pareto_log.py
+python dyn_tiling/generate_fig9_pareto_log.py
 # Produced file: step_artifact/dyn_tiling/figure9.pdf
 
 echo "figure 9 done"
@@ -26,7 +26,7 @@ pytest dyn_tiling/test_mixtral_sweep_prefill_revision.py::test_mixtral_b1024
 pytest dyn_tiling/test_qwen_sweep_prefill_revision.py::test_qwen_b1024_ablation
 # Produced file: step_artifact/dyn_tiling/figure_10_qwen_b1024_raw.csv
 
-python dyn_tiling/generate_fig7_pareto_log.py
+python dyn_tiling/generate_fig10_pareto_log.py
 # Produced file: step_artifact/dyn_tiling/figure10.pdf
 
 echo "figure 10 done"
@@ -70,6 +70,8 @@ echo "figure 21 done"
 echo "figure 14 start"
 
 pytest dynamic_par/sweep_ae_revision.py::test_b64_sweep # 3m30s
+# Produced file: step_artifact/dynamic_par/batch64_interleave_dynamic.csv
+
 python dynamic_par/fig_interleave_dyn.py
 # Produced file: step_artifact/dynamic_par/figure14.pdf
 
@@ -78,6 +80,8 @@ echo "figure 14 done"
 echo "figure 15 start"
 
 pytest dynamic_par/sweep_ae_revision.py::test_batch_sweep # 1m
+# Produced file: step_artifact/dynamic_par/batch_sweep_coarse_vs_dynamic.csv
+
 python dynamic_par/fig_coarse_dyn_64.py
 # Produced file: step_artifact/dynamic_par/figure15.pdf
 
