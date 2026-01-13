@@ -1,36 +1,35 @@
-# Figure 5 (2m)
+# Figure 8 (2m)
 cd /root/step_artifact/
 source ./hdl_validation/figure5_step.sh  
 # Produced file: step_artifact/hdl_validation/fig5.csv
 
-
-# Figure 6 (30m, 46m)
+# --------------------------------------------------------------------
+# Figure 9 
 cd /root/step_artifact/
-pytest dyn_tiling/test_mixtral_sweep.py::test_mixtral_b64
-# Produced file: step_artifact/dyn_tiling/figure_6_mixtral_b64.csv
+pytest dyn_tiling/test_qwen_sweep_revision.py::test_qwen_b64_ablation # 
+# Produced file: step_artifact/dyn_tiling/figure_6_qwen_b64_raw.csv
 
-pytest dyn_tiling/test_qwen_sweep.py::test_qwen_b64
-# Produced file: step_artifact/dyn_tiling/figure_6_qwen_b64.csv
+python dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64 # 
+# Produced file: step_artifact/dyn_tiling/figure_6_mixtral_b64_raw.csv
 
-python dyn_tiling/generate_fig6.py
-# Produced file: step_artifact/dyn_tiling/figure6.pdf
-# Produced file: step_artifact/dyn_tiling/figure6.png
+python dyn_tiling/generate_fig6_pareto_log.py
+# Produced file: step_artifact/dyn_tiling/figure9.pdf
 
-echo "figure 6 done"
+echo "figure 9 done"
 
-# Figure 7 (72m, 71m)
+# --------------------------------------------------------------------
+# Figure 10
 cd /root/step_artifact/
-pytest dyn_tiling/test_mixtral_sweep_prefill.py::test_mixtral_b1024
-# Produced file: step_artifact/dyn_tiling/figure_7_mixtral_b1024.csv
+pytest dyn_tiling/test_mixtral_sweep_prefill_revision.py::test_mixtral_b1024 
+# Produced file: step_artifact/dyn_tiling/figure_10_mixtral_b1024_raw.csv
 
-pytest dyn_tiling/test_qwen_sweep_prefill.py::test_qwen_b1024
-# Produced file: step_artifact/dyn_tiling/figure_7_qwen_b1024.csv
+pytest dyn_tiling/test_qwen_sweep_prefill_revision.py::test_qwen_b1024_ablation
+# Produced file: step_artifact/dyn_tiling/figure_10_qwen_b1024_raw.csv
 
-python dyn_tiling/generate_fig7.py
-# Produced file: step_artifact/dyn_tiling/figure7.pdf
-# Produced file: step_artifact/dyn_tiling/figure7.png
+python dyn_tiling/generate_fig7_pareto_log.py
+# Produced file: step_artifact/dyn_tiling/figure10.pdf
 
-echo "figure 7 done"
+echo "figure 10 done"
 
 # --------------------------------------------------------------------
 # Figure 12 & 13 (48m, 52m)
