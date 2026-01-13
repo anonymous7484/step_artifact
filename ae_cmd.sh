@@ -32,7 +32,8 @@ python dyn_tiling/generate_fig7.py
 
 echo "figure 7 done"
 
-# Figure 8 & 9 (48m, 52m)
+# --------------------------------------------------------------------
+# Figure 12 & 13 (48m, 52m)
 cd /root/step_artifact/
 pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_tile
 # Produced files: step_artifact/timeshare_mem_bound/fig_8_a.csv, 
@@ -42,15 +43,15 @@ pytest timeshare_mem_bound/test_membound_qwen_sweep_revet.py::test_static_tile
 pytest timeshare_mem_bound/test_membound_qwen_sweep_dyn_tile.py::test_dyn_tile
 # Produced files: step_artifact/timeshare_mem_bound/fig_8_b.csv
 
-python timeshare_mem_bound/generate_fig8.py 
-# Produced file: step_artifact/timeshare_mem_bound/figure8.pdf
-python timeshare_mem_bound/generate_fig9.py 
-# Produced file: step_artifact/timeshare_mem_bound/figure9.pdf
+python timeshare_mem_bound/generate_fig12.py 
+# Produced file: step_artifact/timeshare_mem_bound/figure12.pdf
+python timeshare_mem_bound/generate_fig13.py 
+# Produced file: step_artifact/timeshare_mem_bound/figure13.pdf
 
 
-echo "figure 8 & 9 done"
-
-# Figure 11 (1m39s, 4m50s, 6m31s)
+echo "figure 12 & 13 done"
+# --------------------------------------------------------------------
+# Figure 21 (1m39s, 4m50s, 6m31s)
 cd /root/step_artifact/
 pytest dynamic_par/sweep_ae.py::test_b16_sweep
 # Produced file: step_artifact/dynamic_par/batch16_sweep_ae.csv
@@ -61,6 +62,27 @@ pytest dynamic_par/sweep_ae.py::test_b64_sweep
 pytest dynamic_par/sweep_ae.py::test_b64_b16_sweep
 # Produced file: step_artifact/dynamic_par/batch80_sweep_ae.csv
 
-python dynamic_par/fig11.py
-# Produced file: step_artifact/dynamic_par/figure11.pdf
-echo "figure 11 done"
+python dynamic_par/fig21_change_scale.py
+# Produced file: step_artifact/dynamic_par/figure21.pdf
+echo "figure 21 done"
+
+
+# --------------------------------------------------------------------
+echo "figure 14 start"
+
+pytest dynamic_par/sweep_ae_revision.py::test_b64_sweep # 3m30s
+python dynamic_par/fig_interleave_dyn.py
+# Produced file: step_artifact/dynamic_par/figure14.pdf
+
+echo "figure 14 done"
+# --------------------------------------------------------------------
+echo "figure 15 start"
+
+pytest dynamic_par/sweep_ae_revision.py::test_batch_sweep # 1m
+python dynamic_par/fig_coarse_dyn_64.py
+# Produced file: step_artifact/dynamic_par/figure15.pdf
+
+echo "figure 15 done"
+
+
+# --------------------------------------------------------------------

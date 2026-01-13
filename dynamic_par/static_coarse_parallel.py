@@ -587,3 +587,190 @@ def test_static_coarse_par():
         check_gold=False,
         save_graph=True,
     )
+
+
+
+def run_static_coarse_par_batch_sweep(
+    batch: int,
+    cache_row_offset_tiled: int,
+    tile_N: int,
+    metadata_fifo_depth: int,
+    cache_write_back_fifo_depth: int,
+    model_config,
+    k_cache: torch.Tensor,
+    v_cache: torch.Tensor,
+    output_underlying: torch.Tensor,
+    seq_len: torch.Tensor,
+    offset: torch.Tensor,
+    compute_bw: Dict[str, int],
+    mock_bf16: bool,
+    simulate_rust: Optional[str],
+    check_gold: bool,
+    save_graph: bool,
+    logging: Optional[str] = None,
+):
+    channel_dict = {}
+
+    par_factor = batch // 16 if batch <= 64 else 4
+
+    # ----------- Create input ------------------
+    query = []
+    for i in range(par_factor):
+        n_req = 16
+        if batch > 128 and i == 0:
+            n_req = 48
+        elif batch > 64 and i < (batch-64) // 16:
+            n_req = 32
+        query.append(
+            torch.randn(n_req * model_config.query_per_kvhead, model_config.head_dim)
+        )
+
+    key = []
+    for i in range(par_factor):
+        n_req = 16
+        if batch > 128 and i == 0:
+            n_req = 48
+        elif batch > 64 and i < (batch-64) // 16:
+            n_req = 32
+        key.append(torch.randn(n_req, model_config.head_dim))
+
+    value = []
+    for i in range(par_factor):
+        n_req = 16
+        if batch > 128 and i == 0:
+            n_req = 48
+        elif batch > 64 and i < (batch-64) // 16:
+            n_req = 32
+        value.append(torch.randn(n_req, model_config.head_dim))
+
+    idx_list = []
+    for i in range(par_factor):
+        if batch < 64:
+            idx_list.append(torch.arange(i * 16, (i + 1) * 16))
+        elif i >= (batch-64) // 16:
+            idx_list.append(torch.arange(i * 16, (i + 1) * 16))
+        elif (batch >128 and i==0):
+            first = torch.arange(i * 16, (i + 1) * 16)
+            second = torch.arange(64 + i*16, 64 + (i+1)*16)
+            last = torch.arange(128 + i*16, 128 + (i+1)*16)
+            idx_list.append(torch.cat([first,second, last]))
+        else: # batch >=64 and i < (batch-64)//16
+            first = torch.arange(i * 16, (i + 1) * 16)
+            last = torch.arange(64 + i*16, 64 + (i+1)*16)
+            idx_list.append(torch.cat([first, last]))
+
+    seq_len_list = []
+    for i in range(par_factor):
+        if batch < 64:
+            seq_len_list.append(seq_len[i * 16 : (i + 1) * 16])
+        elif i >= (batch-64) // 16:
+            seq_len_list.append(seq_len[i * 16 : (i + 1) * 16])
+        elif batch>128 and i==0:
+            first = seq_len[i * 16 : (i + 1) * 16]
+            second = seq_len[64 + i*16 : 64 + (i+1) * 16]
+            last = seq_len[128 + i*16 : 128 + (i+1) * 16]
+            seq_len_list.append(torch.cat([first, second, last]))
+        else: # batch >=64 and i < (batch-64)//16
+            first = seq_len[i * 16 : (i + 1) * 16]
+            last = seq_len[64 + i*16 : 64 + (i+1) * 16]
+            seq_len_list.append(torch.cat([first, last]))
+
+    offset_list = []
+    for i in range(par_factor):
+        if batch < 64:
+            offset_list.append(offset[i * 16 : (i + 1) * 16])
+        elif i >= (batch-64) // 16:
+            offset_list.append(offset[i * 16 : (i + 1) * 16])
+        elif batch>128 and i==0:
+            first = offset[i * 16 : (i + 1) * 16]
+            second = offset[64 + i*16 : 64 + (i+1) * 16]
+            last = offset[128 + i*16 : 128 + (i+1) * 16]
+            offset_list.append(torch.cat([first, second, last]))
+        else: # batch >=64 and i < (batch-64)//16
+            first = offset[i * 16 : (i + 1) * 16]
+            last = offset[64 + i*16 : 64 + (i+1) * 16]
+            offset_list.append(torch.cat([first, last]))
+
+    # Build graph
+    step_graph = MultiDiGraph()
+    output_list = build_static_coarse_par(
+        step_graph=step_graph,
+        model_config=model_config,
+        query=query,
+        key=key,
+        value=value,
+        k_cache=k_cache,
+        v_cache=v_cache,
+        output_underlying=output_underlying,
+        idx=idx_list,
+        seq_len=seq_len_list,  # [16] x par_factor
+        offset=offset_list,  # [16] x par_factor
+        par_factor=par_factor,
+        metadata_fifo_depth=metadata_fifo_depth,
+        cache_write_back_fifo_depth=cache_write_back_fifo_depth,
+        cache_row_offset_tiled=cache_row_offset_tiled,
+        tile_N=tile_N,
+        compute_bw=compute_bw,
+        mock_bf16=mock_bf16,
+        par_dispatch=1,
+        channel_dict=channel_dict,
+    )
+
+    step_graph = infer_broadcast(step_graph)
+
+    if save_graph:
+        OUTPUT_FILENAME = "static_coarse_par"
+        save_graph_format(step_graph, OUTPUT_FILENAME, ["svg"])
+
+    # Run simulation
+    cycles = 0
+    duration_ms = 0
+    duration_s = 0
+
+    if simulate_rust in ["full", "timing"]:
+        hbm_config = HBMConfig(64, 32, 2, 2, 1, 14)
+        sim_config = SimConfig(
+            channel_depth=1,
+            functional_sim=simulate_rust == "full",
+            mock_bf16=mock_bf16,
+            config_dict=channel_dict,
+        )
+        if logging is None:
+            cycles, duration_ms, duration_s = simulate(
+                step_graph,
+                False,  # logging
+                hbm_config,
+                sim_config,
+                "./graph.pb",
+            )
+        else:
+            assert isinstance(logging, str), "Logging must be a string path"
+            cycles, duration_ms, duration_s = simulate(
+                step_graph,
+                True,  # logging
+                hbm_config,
+                sim_config,
+                "./graph.pb",
+                logging,
+            )
+    elif simulate_rust == "serialize":
+        serialize(step_graph, "./graph.pb", False)
+
+    # Gold check
+    if check_gold:
+        # Q: [B * query_per_kvhead, head_dim] -> [B, query_per_kvhead, head_dim]
+
+        # Create K cache:
+        # - [B, head_dim] -> [B, 1, head_dim]
+        # - [B * maxN, head_dim]
+
+        simulated_output = torch.zeros(
+            (batch * model_config.query_per_kvhead, model_config.head_dim),
+            dtype=torch.float32,
+        )
+        for output in output_list:
+            simulated_output += reconstruct_numpy(output.store_file_name)
+
+        print(simulated_output.shape)
+
+    return cycles
