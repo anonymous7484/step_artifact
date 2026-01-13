@@ -243,6 +243,9 @@ def test_mixtral_b1024():
     result_dict["off_chip_traffic"]["tile=dynamic"] = dyn_off_chip_traffic / dyn_off_chip_traffic
     result_dict["on_chip_mem"]["tile=dynamic"] = dyn_on_chip_mem / dyn_on_chip_mem
 
+    print(f"Completed dynamic tile size")
+    print(f"Cycles: {dyn_cycles}, Off-chip traffic: {dyn_off_chip_traffic}, On-chip mem: {dyn_on_chip_mem}")
+
     ################## Static Tile Size (256) ##################
     for tile_N in [16, 32, 64, 128, 256,512,1024]:
         
@@ -321,9 +324,12 @@ def test_mixtral_b1024():
         result_dict["off_chip_traffic"][f"tile={tile_N}"] = off_chip_traffic_val / dyn_off_chip_traffic
         result_dict["on_chip_mem"][f"tile={tile_N}"] = on_chip_requirement / dyn_on_chip_mem
 
+        print(f"Completed tile_N={tile_N}")
+        print(f"Cycles: {cycles}, Off-chip traffic: {off_chip_traffic_val}, On-chip mem: {on_chip_requirement}")
+
     ################## Save Results to CSV ##################
 
-    out_file = f"./dyn_tiling/figure_7_mixtral_b{batch}.csv"
+    out_file = f"./dyn_tiling/figure_10_mixtral_b{batch}.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [

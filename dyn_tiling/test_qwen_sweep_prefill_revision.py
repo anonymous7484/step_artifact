@@ -300,7 +300,7 @@ def test_qwen_b1024(i_id_arg=22, l_id_arg=16):
     dyn_tile_duration_minutes = round(dyn_tile_duration_seconds / 60, 2)
 
     # save results to csv
-    out_file = f"./dyn_tiling/revision_{i_id:03d}_{l_id:03d}/figure_7_qwen_b{batch}_raw_dynamic_chan_{chan_depth}.csv"
+    out_file = f"./dyn_tiling/figure_10_qwen_b{batch}_raw_dynamic.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
@@ -437,7 +437,7 @@ def test_qwen_b1024(i_id_arg=22, l_id_arg=16):
         static_i_duration_minutes = round(static_i_duration_seconds / 60, 2)
 
         # save results to csv
-        out_file = f"./dyn_tiling/revision_{i_id:03d}_{l_id:03d}/figure_7_qwen_b{batch}_raw_{tile_N}_chan_{chan_depth}.csv"
+        out_file = f"./dyn_tiling/figure_10_qwen_b{batch}_raw_tile{tile_N}.csv"
         try:
             with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
                 fieldnames = [
@@ -470,7 +470,7 @@ def test_qwen_b1024(i_id_arg=22, l_id_arg=16):
             print(f"Error writing CSV file: {e}")
     ################## Save Results to CSV ##################
 
-    out_file = f"./dyn_tiling/revision_{i_id:03d}_{l_id:03d}/figure_7_qwen_b{batch}_chan_{chan_depth}.csv"
+    out_file = f"./dyn_tiling/figure_10_qwen_b{batch}.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
