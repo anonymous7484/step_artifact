@@ -5,8 +5,9 @@ from typing import List, Optional, Tuple, Union
 from step_py.dyndim import DynDim
 from step_py.functions.accum_fn import AccumFn
 from step_py.functions.init_fn import InitFn
-from step_py.functions.map_accum_fn import MapAccumFn
-from step_py.functions.map_fn import MapFn
+from step_py.functions import map_accum_fn
+# from step_py.functions.map_accum_fn import MapAccumFn
+from step_py.functions.map_fn import MapFn, Matmul, DynMatmul
 from step_py.datatype import (
     Bool,
     Buffer,
@@ -80,7 +81,7 @@ class StepOps(ABC):
         pass
 
     @abstractmethod
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode=1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         pass
 
@@ -125,7 +126,7 @@ class MockStreamOp(StepOps):
     ):
         raise NotImplementedError("MockStreamOp doesn't have input")
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         raise NotImplementedError(
             "MockStreamOp shouldn't remain in the graph when calling this method."
@@ -247,8 +248,10 @@ class RandomOffChipLoad(StepOps):
         )
         return total_elements
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
+        if mode == 2:
+            return sympy.Integer(self.tile_row * self.tile_col * self.n_byte * 2)
         return sympy.Integer(self.tile_row * self.tile_col * self.n_byte)
 
 
@@ -385,8 +388,12 @@ class RandomOffChipStore(StepOps):
         )
         return total_elements
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
+        if mode == 2:    
+            return sympy.Integer(
+                self.tile_row * self.tile_col * self.n_byte * self.buffer_depth * 2
+            )
         return sympy.Integer(
             self.tile_row * self.tile_col * self.n_byte * self.buffer_depth
         )
@@ -501,8 +508,10 @@ class OffChipLoad(StepOps):
         )
         return total_elements
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
+        if mode == 2:
+            return sympy.Integer(self.tile_row * self.tile_col * self.n_byte * 2)
         return sympy.Integer(self.tile_row * self.tile_col * self.n_byte)
 
 
@@ -620,8 +629,10 @@ class DynOffChipLoad(StepOps):
         # print(f"DynOffChipLoad: total_elements: {total_elements}")
         return total_elements
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
+        if mode == 2:        
+            return sympy.Integer(self.tile_row * self.tile_col * self.n_byte * 2)
         return sympy.Integer(self.tile_row * self.tile_col * self.n_byte)
 
 
@@ -707,7 +718,7 @@ class ExpandRef(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         # Get the size of the stream's data type
         stream_size: sympy.Expr = self._stream.stream_dtype.size_in_bytes()
@@ -781,7 +792,7 @@ class RepeatStatic(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         # Get the size of the stream's data type
         stream_size: sympy.Expr = self._stream.stream_dtype.size_in_bytes()
@@ -857,7 +868,7 @@ class Promote(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             return sympy.Integer(0)
@@ -961,7 +972,7 @@ class BinaryMap(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             return sympy.Integer(0)
@@ -985,6 +996,18 @@ class BinaryMap(StepOps):
         in2_stream_dtype_size = in2_stream.stream_dtype.size_in_bytes()
         out_stream_dtype_size = self._stream.stream_dtype.size_in_bytes()
 
+        if mode == 2:
+            if isinstance(self.fn, (DynMatmul,Matmul)):
+                # For matmul, we need double the buffer for input streams in mode 2
+                assert isinstance(
+                    in1_stream.stream_dtype, Tile
+                ), "Input stream must be a Tile type."
+                in1_stream_dtype_size = sympy.Mul(in1_stream.stream_dtype.shape[1], sympy.Integer(16))
+                return sympy.Add(
+                    in1_stream_dtype_size, in2_stream_dtype_size, out_stream_dtype_size
+                )
+            else:
+                return sympy.Integer(0)
         return sympy.Add(
             in1_stream_dtype_size, in2_stream_dtype_size, out_stream_dtype_size
         )
@@ -993,7 +1016,7 @@ class BinaryMap(StepOps):
 class BinaryMapAccum(StepOps):
     in1: Union[StepOps, Tuple[StepOps, int]]
     in2: Union[StepOps, Tuple[StepOps, int]]
-    fn: MapAccumFn
+    fn: map_accum_fn.MapAccumFn
     init_fn: InitFn
     rank: int
     write_back_mu: bool  # whether the consumer is a bufferize or not
@@ -1005,7 +1028,7 @@ class BinaryMapAccum(StepOps):
         graph: MultiDiGraph,
         in1: Union[StepOps, Tuple[StepOps, int]],
         in2: Union[StepOps, Tuple[StepOps, int]],
-        fn: MapAccumFn,
+        fn: map_accum_fn.MapAccumFn,
         init_fn: InitFn,
         rank: int,
         write_back_mu: bool,
@@ -1094,7 +1117,7 @@ class BinaryMapAccum(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             # Get the size of the stream's data type
@@ -1102,6 +1125,7 @@ class BinaryMapAccum(StepOps):
 
         # Get the first input stream (all inputs should have the same datatype)
         in_stream = get_stream(self.in1)
+        in2_stream = get_stream(self.in2)
 
         # Check that the input stream's datatype is a Tile
         assert isinstance(
@@ -1110,6 +1134,22 @@ class BinaryMapAccum(StepOps):
 
         # Calculate the size of the input stream's datatype
         in_tile_size = in_stream.stream_dtype.size_in_bytes()
+        out_stream_dtype_size = self._stream.stream_dtype.size_in_bytes()
+
+        if mode == 2:
+            if isinstance(self.fn, (map_accum_fn.DynMatmul,map_accum_fn.Matmul)):
+                # For matmul, we need double the buffer for input streams in mode 2
+                assert isinstance(
+                    in_stream.stream_dtype, Tile
+                ), "Input stream must be a Tile type."
+                in1_stream_dtype_size = sympy.Mul(in_stream.stream_dtype.shape[1], sympy.Integer(16))
+                in2_stream_dtype_size = in2_stream.stream_dtype.size_in_bytes()
+                return sympy.Add(
+                    in1_stream_dtype_size, in2_stream_dtype_size, out_stream_dtype_size
+                )
+            else:
+                return out_stream_dtype_size
+
 
         # Return the size times (len(self._inputs) + 1) for FIFO requirements
         return sympy.Mul(in_tile_size, sympy.Integer(len(self.input_list) + 1))
@@ -1178,7 +1218,7 @@ class Broadcast(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         return sympy.Integer(0)
 
@@ -1270,12 +1310,14 @@ class OffChipStore(StepOps):
         # Multiply by the size of the data type
         return sympy.Mul(total_elements, input_stream.stream_dtype.size_in_bytes())
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         # Get the input stream
         input_stream = get_stream(self._input)
 
         # Return the size of the data type of the input stream
+        if mode==2:
+            return input_stream.stream_dtype.size_in_bytes() * 2
         return input_stream.stream_dtype.size_in_bytes()
 
 
@@ -1367,7 +1409,7 @@ class Bufferize(StepOps):
 
         return sympy.Mul(total_elements, tile_size)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         # Get the input stream
         in_stream = get_stream(self._input)
@@ -1385,7 +1427,7 @@ class Bufferize(StepOps):
         assert isinstance(
             self._stream.stream_dtype, Buffer
         ), "Stream must be a Buffer type."
-        buffer_size = self._stream.stream_dtype.size_in_bytes()
+        buffer_size = self._stream.stream_dtype.size_in_bytes() * 2
 
         return sympy.Add(buffer_size, tile_size)
 
@@ -1483,7 +1525,7 @@ class Streamify(StepOps):
 
         return sympy.Mul(total_input_elements, repeat_product, buffer_size)
 
-    def on_chip_requirement(self, count_fifos: bool = True) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = True, mode: int = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         # Get the size of the stream's data type
         assert isinstance(
@@ -1500,6 +1542,9 @@ class Streamify(StepOps):
         ), "Stream must be a Buffer type."
         # Calculate the size of the buffer (self._stream's datatype)
         buffer_size = in_stream.stream_dtype.size_in_bytes()
+
+        if mode == 2:
+            return sympy.Integer(0)
 
         return sympy.Add(buffer_size, tile_size)
 
@@ -1617,7 +1662,7 @@ class DynStreamify(StepOps):
 
         return sympy.Mul(ref_elements, buffer_size)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         # Get the size of the stream's data type
         assert isinstance(
@@ -1634,6 +1679,9 @@ class DynStreamify(StepOps):
         ), "Stream must be a Buffer type."
         # Calculate the size of the buffer (self._stream's datatype)
         buffer_size = in_stream.stream_dtype.size_in_bytes()
+        
+        if mode == 2:
+            return sympy.Integer(0)
 
         return sympy.Add(buffer_size, tile_size)
 
@@ -1743,7 +1791,7 @@ class Parallelize(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             return sympy.Integer(0)
@@ -1857,7 +1905,7 @@ class FlatPartition(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             return sympy.Integer(0)
@@ -2005,7 +2053,7 @@ class EagerMerge(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             return sympy.Integer(0)
@@ -2129,7 +2177,7 @@ class FlatReassemble(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             if self.write_back_mu:
@@ -2241,7 +2289,7 @@ class UnaryMap(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             return sympy.Integer(0)
@@ -2260,6 +2308,9 @@ class UnaryMap(StepOps):
         in_tile_size = in_stream.stream_dtype.size_in_bytes()
         output_tile_size = self._stream.stream_dtype.size_in_bytes()
 
+        if mode==2:
+            return sympy.Integer(0)
+        
         return sympy.Add(in_tile_size, output_tile_size)
 
 
@@ -2342,7 +2393,7 @@ class Accum(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         accumulator_size = self._stream.stream_dtype.size_in_bytes()
 
@@ -2352,6 +2403,9 @@ class Accum(StepOps):
         ), "Input stream must be a Tile type."
         input_size = in_stream_dtype.size_in_bytes()
         if not count_fifos:
+            return accumulator_size
+        
+        if mode==2:
             return accumulator_size
 
         return sympy.Add(accumulator_size, input_size)
@@ -2449,7 +2503,7 @@ class Flatten(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             return sympy.Integer(0)
@@ -2605,7 +2659,7 @@ class Reshape(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         if not count_fifos:
             return sympy.Integer(0)
@@ -2722,6 +2776,6 @@ class RetileStreamify(StepOps):
         """Return the off-chip traffic for this operation."""
         return sympy.Integer(0)
 
-    def on_chip_requirement(self, count_fifos: bool = False) -> sympy.Expr:
+    def on_chip_requirement(self, count_fifos: bool = False, mode = 1) -> sympy.Expr:
         """Return the on-chip memory requirement for this operation."""
         return sympy.Integer(0)

@@ -218,7 +218,7 @@ fig_b_base = df.loc['performance(cycles)', '128(1)']
 fig_b_compare_base = df.loc['performance(cycles)', '32(4)']
 
 cycles_hlines_list = [[fig_a_base, fig_a_compare_base], [fig_b_base, fig_b_compare_base]]
-output_file_combined = "./timeshare_mem_bound/figure8.pdf"
+output_file_combined = "./timeshare_mem_bound/figure12.pdf"
 
 cycle_raw_comp_utilization_multi(
     csv_files=csv_files,

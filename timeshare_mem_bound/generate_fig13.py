@@ -205,7 +205,7 @@ def create_two_plots_pdf(csv_files, output_pdf, cycles_scale=None, on_chip_scale
 # Example usage:
 # create_two_plots_pdf('your_data.csv', 'two_plots.pdf')
 
-outfile = "./timeshare_mem_bound/figure9.pdf"
+outfile = "./timeshare_mem_bound/figure13.pdf"
 
 on_chip_scale=(1*1e4,10*1e4)
 allocated_flops_scale=(1*1e5,10*1e5)
