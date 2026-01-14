@@ -166,7 +166,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
 
         ```
 
-### Run and Validate Figure 9 (5 human-minutes + 80 compute-minutes)
+### Run and Validate Figure 9 (5 human-minutes + 150 compute-minutes)
 
 * Run the following commands
 
@@ -174,11 +174,12 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     ### In the docker container ###
     cd /root/step_artifact/
     source setup.sh
-    pytest dyn_tiling/test_qwen_sweep_revision.py::test_qwen_b64_ablation # 
-    # Produced file: step_artifact/dyn_tiling/figure_9_qwen_b64_raw.csv
 
-    python dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64 # 
+    python dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64 # 60m
     # Produced file: step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv
+
+    pytest dyn_tiling/test_qwen_sweep_revision.py::test_qwen_b64_ablation # 90m
+    # Produced file: step_artifact/dyn_tiling/figure_9_qwen_b64_raw.csv
 
     python dyn_tiling/generate_fig9_pareto_log.py
     # Produced file: step_artifact/dyn_tiling/figure9.pdf
@@ -228,7 +229,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
                 |_ figure9.pdf
         ```
 
-### Run and Validate Figure 10 (5 human-minutes + 150 compute-minutes)
+### Run and Validate Figure 10 (5 human-minutes + ___ compute-minutes)
 
 * Run the following commands
 
