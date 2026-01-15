@@ -19,11 +19,11 @@ echo "figure 9 done"
 # --------------------------------------------------------------------
 # Figure 10
 date
-time pytest dyn_tiling/test_mixtral_sweep_prefill_revision.py::test_mixtral_b1024 -s
+time pytest dyn_tiling/test_mixtral_sweep_prefill_revision.py::test_mixtral_b1024 -s # 380m
 # Produced file: step_artifact/dyn_tiling/figure_10_mixtral_b1024_raw.csv
 
 date
-time pytest dyn_tiling/test_qwen_sweep_prefill_revision.py::test_qwen_b1024_ablation -s
+time pytest dyn_tiling/test_qwen_sweep_prefill_revision.py::test_qwen_b1024_ablation -s # 650m
 # Produced file: step_artifact/dyn_tiling/figure_10_qwen_b1024_raw.csv
 
 date

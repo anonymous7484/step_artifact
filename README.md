@@ -47,7 +47,7 @@ This guide assumes the user has a working installation of Docker, git, and some 
     source setup.sh
     ```
 
-## Run Experiments (5 human-minutes + 7 compute-hour)
+## Run Experiments (5 human-minutes + 24.5 compute-hour)
 
 All the experiments and figures can be run by the following commands. In total, it takes around 7 hours when tested on a machine with 8 vCPUs.
 
@@ -229,7 +229,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
                 |_ figure9.pdf
         ```
 
-### Run and Validate Figure 10 (5 human-minutes + ___ compute-minutes)
+### Run and Validate Figure 10 (5 human-minutes + 17 compute-hours)
 
 * Run the following commands
 
