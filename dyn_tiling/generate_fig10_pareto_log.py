@@ -56,12 +56,14 @@ def create_pareto_plot(csv_files, subplot_titles, figsize=(20, 9),
         # Extract data for static tiles
         tile_sizes = df_static['tile_N'].str.replace('tile=', '').astype(int).values
         static_cycles = df_static['cycles'].values
-        static_on_chip = df_static['on_chip_mem'].values
+        static_on_chip = df_static['on_chip_mem'].values if plot_idx==0 else df_static['on_chip_mem_new'].values
 
         # Extract data for dynamic tiling
         dynamic_cycles = df_dynamic['cycles'].values[0] if len(df_dynamic) > 0 else None
         dynamic_on_chip = df_dynamic['on_chip_mem'].values[0] if len(df_dynamic) > 0 else None
-
+        if plot_idx ==1:
+            dynamic_on_chip = df_dynamic['on_chip_mem_new'].values[0] if len(df_dynamic) > 0 else None
+            
         # Plot the Pareto curve (connecting static tile points)
         ax.plot(static_on_chip, static_cycles,
                 color=color_palette[0], linewidth=3,

@@ -4,13 +4,13 @@ source ./hdl_validation/figure5_step.sh
 # Produced file: step_artifact/hdl_validation/fig5.csv
 
 # --------------------------------------------------------------------
-# Figure 9 
+# Figure 9 (60m, 90m)
 cd /root/step_artifact/
+pytest dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64
+# Produced file: step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv
+
 pytest dyn_tiling/test_qwen_sweep_revision.py::test_qwen_b64_ablation # 
 # Produced file: step_artifact/dyn_tiling/figure_9_qwen_b64_raw.csv
-
-python dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64 # 
-# Produced file: step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv
 
 python dyn_tiling/generate_fig9_pareto_log.py
 # Produced file: step_artifact/dyn_tiling/figure9.pdf
@@ -18,9 +18,9 @@ python dyn_tiling/generate_fig9_pareto_log.py
 echo "figure 9 done"
 
 # --------------------------------------------------------------------
-# Figure 10
+# Figure 10 (380m, 650m)
 cd /root/step_artifact/
-pytest dyn_tiling/test_mixtral_sweep_prefill_revision.py::test_mixtral_b1024 
+pytest dyn_tiling/test_mixtral_sweep_prefill_revision.py::test_mixtral_b1024
 # Produced file: step_artifact/dyn_tiling/figure_10_mixtral_b1024_raw.csv
 
 pytest dyn_tiling/test_qwen_sweep_prefill_revision.py::test_qwen_b1024_ablation

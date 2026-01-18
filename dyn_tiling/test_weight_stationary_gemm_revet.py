@@ -36,6 +36,7 @@ def ws_tile_mn_mk_gemm_reshape_revet(
     tile_N: int,  # M
     tile_F: int,  # Gate & Up (K), Down (N)
     mock_bf16: bool,
+    config_dict: dict,
 ) -> Tuple[OffChipStore, int]:
     par_dispatch = 1
 
@@ -399,6 +400,10 @@ def ws_tile_mn_mk_gemm_reshape_revet(
         for i in range(model_config.n_routed_experts)
     ]
 
+    # for node in weighted_feature_streams:
+    #     node: StepOps
+    #     config_dict[node.instance_id] = batch
+
     # idx_to_print = 4
     # # Expert counts: tensor([21, 21, 11, 16, 16, 12, 12, 19])
     # for i in range(model_config.n_routed_experts):
@@ -484,8 +489,11 @@ def call_ws_tile_mn_mk_gemm_reshape_revet(
     simulate_rust: str,
     logging: Optional[str] = None,
     mock_bf16: bool = False,
+    chan_depth: int = 2,
 ) -> tuple[StepOps, sympy.Expr, sympy.Expr, int, int, int]:
     step_graph = MultiDiGraph()
+
+    config_dict = {}
 
     output: OffChipStore
     output, unit_expert_on_chip = ws_tile_mn_mk_gemm_reshape_revet(
@@ -508,7 +516,7 @@ def call_ws_tile_mn_mk_gemm_reshape_revet(
         w_down_list=w_down_list,
         tile_N=tile_N,
         tile_F=tile_F,
-        mock_bf16=mock_bf16,
+        mock_bf16=mock_bf16,config_dict=config_dict,
     )
 
     print(f"Output untiled: {output.get_untiled_shape()}")
@@ -549,7 +557,7 @@ def call_ws_tile_mn_mk_gemm_reshape_revet(
     if simulate_rust in ["full", "timing"]:
         hbm_config = HBMConfig(64, 32, 2, 2, 1, 14)
         sim_config = SimConfig(
-            channel_depth=2, functional_sim=simulate_rust == "full", mock_bf16=mock_bf16
+            channel_depth=chan_depth, functional_sim=simulate_rust == "full", mock_bf16=mock_bf16, config_dict=config_dict,
         )
 
         if logging is None:
@@ -701,6 +709,7 @@ def run_ws_tile_mn_mk_revet(
     gold_check,
     mock_bf16: bool = False,
     logging: Optional[str] = None,
+    chan_depth: int = 2,
 ):
 
     B = expert_indices.shape[0]
@@ -788,6 +797,7 @@ def run_ws_tile_mn_mk_revet(
         simulate_rust=simulate_rust,
         mock_bf16=mock_bf16,
         logging=logging,
+        chan_depth = chan_depth,
     )
 
     if simulate_rust and gold_check:

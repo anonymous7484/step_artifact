@@ -457,6 +457,7 @@ def call_ws_tile_mn_mk_gemm_reshape_dyn_tile(
     simulate_rust: str,
     logging: Optional[str] = None,
     mock_bf16: bool = False,
+    chan_depth: int = 2,
 ) -> tuple[StepOps, sympy.Expr, sympy.Expr, int, int, int]:
     step_graph = MultiDiGraph()
 
@@ -522,7 +523,7 @@ def call_ws_tile_mn_mk_gemm_reshape_dyn_tile(
     if simulate_rust in ["full", "timing"]:
         hbm_config = HBMConfig(64, 32, 2, 2, 1, 14)
         sim_config = SimConfig(
-            channel_depth=2, functional_sim=simulate_rust == "full", mock_bf16=mock_bf16
+            channel_depth=chan_depth, functional_sim=simulate_rust == "full", mock_bf16=mock_bf16
         )
 
         if logging is None:
@@ -564,6 +565,7 @@ def run_ws_tile_mn_mk_dyn_tile(
     gold_check,
     mock_bf16: bool = False,
     logging: Optional[str] = None,
+    chan_depth: int = 2,
 ):
 
     B = expert_indices.shape[0]
@@ -651,6 +653,7 @@ def run_ws_tile_mn_mk_dyn_tile(
         simulate_rust=simulate_rust,
         mock_bf16=mock_bf16,
         logging=logging,
+        chan_depth=chan_depth,
     )
 
     if simulate_rust and gold_check:

@@ -266,7 +266,7 @@ def test_qwen_b64(i_id_arg=32, l_id_arg=12):
     dyn_tile_duration_minutes = round(dyn_tile_duration_seconds / 60, 2)
 
     # save results to csv
-    out_file = f"./dyn_tiling/revision_qwen_b{batch}_{i_id:03d}_{l_id:03d}/figure_6_qwen_b{batch}_raw_dynamic.csv"
+    out_file = f"./dyn_tiling/figure_9_qwen_b{batch}_raw_dynamic.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
@@ -301,7 +301,7 @@ def test_qwen_b64(i_id_arg=32, l_id_arg=12):
 
 
     ################## Static Tile Size (16) ##################
-    for tile_N in [8,16,32,64]:
+    for tile_N in [64,32,16,8]:
 
         static_i_start_time = time.perf_counter()
         now = datetime.now(timezone.utc)
@@ -403,7 +403,7 @@ def test_qwen_b64(i_id_arg=32, l_id_arg=12):
         static_i_duration_minutes = round(static_i_duration_seconds / 60, 2)
 
         # save results to csv
-        out_file = f"./dyn_tiling/revision_qwen_b{batch}_{i_id:03d}_{l_id:03d}/figure_6_qwen_b{batch}_raw_{tile_N}.csv"
+        out_file = f"./dyn_tiling/figure_9_qwen_b{batch}_raw_tile{tile_N}.csv"
         try:
             with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
                 fieldnames = [
@@ -438,7 +438,7 @@ def test_qwen_b64(i_id_arg=32, l_id_arg=12):
     
     ################## Save Results to CSV ##################
 
-    out_file = f"./dyn_tiling/revision_qwen_b{batch}_{i_id:03d}_{l_id:03d}/figure_6_qwen_b{batch}.csv"
+    out_file = f"./dyn_tiling/figure_9_qwen_b{batch}.csv"
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:
             fieldnames = [
