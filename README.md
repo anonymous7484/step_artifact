@@ -175,7 +175,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
     cd /root/step_artifact/
     source setup.sh
 
-    python dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64 # 60m
+    pytest dyn_tiling/test_mixtral_sweep_revision.py::test_mixtral_b64 # 60m
     # Produced file: step_artifact/dyn_tiling/figure_9_mixtral_b64_raw.csv
 
     pytest dyn_tiling/test_qwen_sweep_revision.py::test_qwen_b64_ablation # 90m
