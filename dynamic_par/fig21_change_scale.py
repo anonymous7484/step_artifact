@@ -164,9 +164,9 @@ def create_multi_csv_bar_chart_arxiv(
 # Inputs (adjust paths as needed)
 # ======================
 csv_files = [
-    "./results_ae/step_artifact/dynamic_par/batch16_sweep_ae.csv",
-    "./results_ae/step_artifact/dynamic_par/batch64_sweep_ae.csv",
-    "./results_ae/step_artifact/dynamic_par/batch80_sweep_ae.csv",
+    "./dynamic_par/batch16_sweep_ae.csv",
+    "./dynamic_par/batch64_sweep_ae.csv",
+    "./dynamic_par/batch80_sweep_ae.csv",
 ]
 
 # Multi-line tick labels: first line (High/Med/Low), second line descriptor
