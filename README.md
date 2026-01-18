@@ -8,6 +8,7 @@ This is a repository for STeP artifact generation.
 * [Run Experiments (5 human-minutes + 7 compute-hour)](#run-experiments-5-human-minutes--7-compute-hour)
 * [Validate All Results](#validate-all-resultsvalidate)
 * [[Optional] Detailed Explanation of What the Top-Level Script Does](#optional-detailed-explanation-of-what-the-top-level-script-does)
+* [[Optional] To customise or extend the toolchain](#optional-to-customise-or-extend-the-toolchain)
 
 ## Getting Started (5 human-minutes + 10 compute-minutes)
 
@@ -49,15 +50,15 @@ This guide assumes the user has a working installation of Docker, git, and some 
 
 ## Run Experiments (5 human-minutes + 24.5 compute-hour)
 
-All the experiments and figures can be run by the following commands. In total, it takes around 7 hours when tested on a machine with 8 vCPUs.
+All the experiments and figures can be run by the following commands. In total, it takes around 24.5 hours when tested on a machine with 8 vCPUs.
 
 ```bash
 ### In Docker Container ###
 $ cd /root/step_artifact
-# Figure 6,7,8,9,11, and half of Figure 5 (5hr 30mins)
+# Figure 9,10,12,13,14,15,21 and half of Figure 8 (23 hr)
 $ source ae_cmd.sh
-# Figure 5 (1hr 30mins)
-$ cp /root/step_artifact/hdl_validation/fig5.csv /root/step-artifact-eval/step_reference.csv
+# Figure 8 (1hr 30mins)
+$ cp /root/step_artifact/hdl_validation/fig8.csv /root/step-artifact-eval/step_reference.csv
 $ cd /root/step-artifact-eval
 $ ./run_dse_and_figure.sh
 ```
@@ -90,38 +91,40 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
         |_timeshare_mem_bound
     ```
 
-    * Figure 8: The reproduced figure and experiment results can be found in the `step-artifact-eval` folder. The `validation.pdf` should match Figure 5 in the paper. The values used to create the plot are in the other two CSV files in the `step-artifact-eval` folder.
+    * Figure 8: The reproduced figure and experiment results can be found in the `step-artifact-eval` folder. The `validation.pdf` should match Figure 8 in the paper. The values used to create the plot are in the other two CSV files in the `step-artifact-eval` folder.
 
-    * Figure 9: The reproduced figure and experiment results can be found in the `dyn_tiling` folder. The file `figure9.pdf` should match Figure 9 in the paper. The values used for creating the plot can be found in`figure_9_mixtral_b64.csv` and `figure_9_qwen_b64.csv`.
+    * Figure 9: The reproduced figure and experiment results can be found in the `dyn_tiling` folder. The file `figure9.pdf` should match Figure 9 in the paper. The values used for creating the plot can be found in`figure_9_mixtral_b64_raw.csv` and `figure_9_qwen_b64_raw.csv`.
 
-    * Figure 10: The reproduced figure and experiment results can be found in the `dyn_tiling` folder.  The file `figure10.pdf` should match Figure 10 in the paper. The values used for creating the plot can be found in `figure_10_mixtral_b1024.csv` and `figure_10_qwen_b1024.csv`.
+    * Figure 10: The reproduced figure and experiment results can be found in the `dyn_tiling` folder.  The file `figure10.pdf` should match Figure 10 in the paper. The values used for creating the plot can be found in `figure_10_mixtral_b1024_raw.csv` and `figure_10_qwen_b1024_raw.csv`.
 
     * Figure 12: The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure12.pdf` should match Figure 12 in the paper. The values used to create the plot are in `fig_8_a.csv` and `fig_8_b.csv`.
 
     * Figure 13: The reproduced figure and experiment results can be found in the `timeshare_mem_bound` folder. The file `figure13.pdf` should match Figure 13 in the paper. The values used to create the plot are in `fig_9_a.csv` and `fig_9_b.csv`.
 
-    * Figure 14: The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure14.pdf` should match Figure 14 in the paper. The values used for creating the plot can be found in the other three CSV files in the `dynamic_par` folder.
+    * Figure 14: The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure14.pdf` should match Figure 14 in the paper. The values used for creating the plot can be found in `batch64_interleave_dynamic.csv`.
 
-    * Figure 15: The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure15.pdf` should match Figure 15 in the paper. The values used for creating the plot can be found in the other three CSV files in the `dynamic_par` folder.
+    * Figure 15: The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure15.pdf` should match Figure 15 in the paper. The values used for creating the plot can be found in `batch_sweep_coarse_vs_dynamic.csv`.
+
+    * Figure 21: The reproduced figure and experiment results can be found in the `dynamic_par` folder. The file `figure21.pdf` should match Figure 21 in the paper. The values used to generate the plot are provided in the remaining CSV files in the same directory.
 
 ## [Optional] Detailed Explanation of What the Top-Level Script Does
 
 ### Run and Validate Figure 8 (10 human-minutes + 2 compute-hours)
 
 * Run the following commands:
-    1. Generates the STeP Simulator numbers (organe dots) in Figure 5. The numbers will be stored in `/root/step_artifact/hdl_validation/fig5.csv`.
+    1. Generates the STeP Simulator numbers (organe dots) in Figure 5. The numbers will be stored in `/root/step_artifact/hdl_validation/fig8.csv`.
 
         ```bash
         ### In the docker container ###
         $ cd /root/step_artifact/
-        $ source ./hdl_validation/figure5_step.sh    
+        $ source ./hdl_validation/figure8_step.sh    
         ```
 
-    2. Run the HDL simulation, copy the results from STeP simulator to the designated location, and generate figure 5.
+    2. Run the HDL simulation, copy the results from STeP simulator to the designated location, and generate figure 8.
 
         ```bash
-        # Copy the simulation resuls for the STeP simulator (fig5.csv) to the designated location to generate the graph
-        $ cp /root/step_artifact/hdl_validation/fig5.csv /root/step-artifact-eval/step_reference.csv
+        # Copy the simulation resuls for the STeP simulator (fig8.csv) to the designated location to generate the graph
+        $ cp /root/step_artifact/hdl_validation/fig8.csv /root/step-artifact-eval/step_reference.csv
         # Run the HDL simulation and generate the figure
         $ cd /root/step-artifact-eval
         $ ./run_dse_and_figure.sh
@@ -137,7 +140,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
         $ cd step_artifact
         ```
 
-    2. As there will only be results related to figure 5 generated, modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 5 as follows:
+    2. As there will only be results related to figure 8 generated, modify the `FILES_TO_COPY` list in the `step_artifact/copy_from_docker.py` file to only include the files related to figure 5 as follows:
 
         ```python
         FILES_TO_COPY = [
@@ -155,7 +158,7 @@ Once all the experiments complete, detach the container by pressing `CTRL+p` and
         $ python copy_from_docker.py --docker_id <CONTAINER_ID> --output_dir <OUTPUT_DIRECTORY>
         ```
 
-    4. The reproduced figure and experiment results can be found in the `step-artifact-eval` folder. The `validation.pdf` should match Figure 5 in the paper. The values used to create the plot are in the other two CSV files in the `step-artifact-eval` folder.
+    4. The reproduced figure and experiment results can be found in the `step-artifact-eval` folder. The `validation.pdf` should match Figure 8 in the paper. The values used to create the plot are in the other two CSV files in the `step-artifact-eval` folder.
 
         ```
         step_artifact/<OUTPUT_DIRECTORY>

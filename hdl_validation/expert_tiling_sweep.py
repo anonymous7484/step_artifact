@@ -900,7 +900,7 @@ def test_expert_tiling_sweep_single_schedule():
         result_metrics_list.append(result_metrics)
 
     # # ------------ Save to CSV ------------
-    out_file = f"./hdl_validation/fig5.csv"
+    out_file = f"./hdl_validation/fig8.csv"
 
     try:
         with open(out_file, "w", newline="", encoding="utf-8") as csvfile:

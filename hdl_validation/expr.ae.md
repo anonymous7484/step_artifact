@@ -1,4 +1,4 @@
-# Figure 5
+# Figure 8
 
 * Command:
 
@@ -15,4 +15,4 @@
 
 * Time: 30s (c4)
 
-* Results will be saved in `step_artifact/hdl_validation/fig5.csv`.
+* Results will be saved in `step_artifact/hdl_validation/fig8.csv`.
